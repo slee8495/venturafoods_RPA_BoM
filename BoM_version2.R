@@ -286,7 +286,7 @@ parent_count_2[-which(duplicated(parent_count_2$Component)),] -> parent_count_2
 
 # Inventory from MicroStrategy (FG) ----
 
-FG <- read_excel("C:/Users/SLee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 22/BoM Report Automation/BoM version 2/Inventory_micro.xlsx", 
+FG <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Inventory Report for all locations - 07.20.22.xlsx", 
                 col_names = FALSE,
                 sheet = "FG")
 
@@ -297,16 +297,13 @@ FG[-1, ] -> FG
 
 colnames(FG)[1] <- "Location"
 colnames(FG)[2] <- "Location_Name"
-colnames(FG)[3] <- "Item"
-colnames(FG)[4] <- "Description"
-colnames(FG)[5] <- "campus"
-colnames(FG)[6] <- "campus_name"
-colnames(FG)[7] <- "Inventory_Status_Code"
-colnames(FG)[8] <- "Hold_Status"
-colnames(FG)[9] <- "Current_Inventory_Balance"
+colnames(FG)[3] <- "Mfg_Location_campus"
+colnames(FG)[4] <- "Item"
+colnames(FG)[5] <- "Description"
+colnames(FG)[6] <- "Inventory_Status_Code"
+colnames(FG)[7] <- "Hold_Status"
+colnames(FG)[8] <- "Current_Inventory_Balance"
 
-FG %<>% 
-  dplyr::select(-campus_name)
 
 
 # Inventory from MicroStrategy (RM) ----
@@ -322,16 +319,12 @@ RM[-1, ] -> RM
 
 colnames(RM)[1] <- "Location"
 colnames(RM)[2] <- "Location_Name"
-colnames(RM)[3] <- "campus"
+colnames(RM)[3] <- "Mfg_Location_campus"
 colnames(RM)[4] <- "Item"
 colnames(RM)[5] <- "Description"
 colnames(RM)[6] <- "Inventory_Status_Code"
 colnames(RM)[7] <- "Hold_Status"
 colnames(RM)[8] <- "Current_Inventory_Balance"
-
-RM %<>% 
-  dplyr::relocate(Location, Location_Name, Item, Description, campus, Inventory_Status_Code, 
-                  Hold_Status, Current_Inventory_Balance)
 
 
 # combine FG, RM
@@ -341,7 +334,7 @@ rbind(FG, RM) -> inventory_micro
 
 inventory_micro %<>% 
   dplyr::mutate(ref = paste0(Location, "_", Item),
-                campus_ref = paste0(campus, "_", Item)) %>% 
+                campus_ref = paste0(Mfg_Location_campus, "_", Item)) %>% 
   dplyr::relocate(ref, campus_ref)
 
 
