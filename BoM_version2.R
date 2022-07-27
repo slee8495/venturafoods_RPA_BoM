@@ -13,17 +13,6 @@ library(skimr)
 ##################################################################################################################################################################
 ##################################################################################################################################################################
 
-## Constrained_RM_List
-
-Constrained_RM_List <- read_excel("S:/Supply Chain Projects/RStudio/BoM/Master formats/Constrained_RM_List.xlsx", 
-                                  col_types = c("numeric", "text", "text", 
-                                                "numeric", "text"))
-
-
-colnames(Constrained_RM_List)[1]  <- "CompNo_labor_code"
-colnames(Constrained_RM_List)[2]  <- "Type"
-colnames(Constrained_RM_List)[3]  <- "Starch_Allocation"
-
 
 ## FG_ref_to_mpg_ref 
 
@@ -56,7 +45,7 @@ colnames(Campus_ref)[4] <- "Campus"
 # DSX Forecast backup ----
 
 DSX_Forecast_Backup <- read_excel(
-  "S:/Global Shared Folders/Large Documents/S&OP/Demand Planning/Demand Planning Team/BI Forecast Backup/DSX Forecast Backup - 2022.06.03.xlsx")
+  "S:/Global Shared Folders/Large Documents/S&OP/Demand Planning/Demand Planning Team/BI Forecast Backup/DSX Forecast Backup - 2022.07.27.xlsx")
 
 DSX_Forecast_Backup[-1,] -> DSX_Forecast_Backup
 colnames(DSX_Forecast_Backup) <- DSX_Forecast_Backup[1, ]
@@ -123,7 +112,7 @@ colnames(DSX_pivot_1)[9]  <- "Mon_g_fcst"
 
 # Opencustord ----
 
-Open_Cust_Ord <- read_excel("C:/Users/SLee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 22/BoM Report Automation/BoM version 2/CustOrd - 06.03.22.xlsx", 
+Open_Cust_Ord <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/test/wo receipt custord po - 07.27.22.xlsx", 
                             sheet = "custord", col_names = FALSE)
 
 Open_Cust_Ord %>% 
@@ -151,7 +140,7 @@ Open_Cust_Ord %>%
 
 # Sales and Open orders cube from Micro (Canada only) ----
 
-canada_micro <- read_excel("C:/Users/SLee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 22/BoM Report Automation/BoM version 2/Sales and Open Orders Cube - 06.03.22.xlsx", 
+canada_micro <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/test/Loc 624 open order - 07.27.22.xlsx", 
                            col_names = FALSE)
 
 
@@ -170,19 +159,19 @@ canada_micro %>%
   dplyr::mutate(date = as.integer(date),
                 date = as.Date(date, origin = "1899-12-30")) %>% 
   dplyr::select(-Loc_Name, - Description) %>% 
-  dplyr::mutate(ref = paste0(Loc, "_", ProductSkuCode),
-                year = lubridate::year(date), year = as.character(year),
+  dplyr::mutate(year = lubridate::year(date), year = as.character(year),
                 month = lubridate::month(date), month = as.character(month),
                 day = lubridate::day(date), day = as.character(day),
                 month_year = paste0(month, "_", year),
-                Qty = as.double(Qty)) %>% 
-  dplyr::relocate(ref, ProductSkuCode, Loc, Qty)-> canada_micro
+                Qty = as.double(Qty),
+                ProductSkuCode = gsub("-", "", ProductSkuCode),
+                ref = paste0(Loc, "_", ProductSkuCode)) %>% 
+  dplyr::relocate(ref, ProductSkuCode, Loc, Qty) -> canada_micro
 
 
 # combine Open orders and Canada from micro
 
 rbind(Open_Cust_Ord, canada_micro) -> Open_Cust_Ord
-
 
 merge(Open_Cust_Ord, FG_ref_to_mfg_ref[, c("ref", "mfg_ref")], by = "ref", all.x = TRUE) %>% 
   dplyr::mutate(next_28_days = ifelse(date <= Sys.Date() + 28, "Y", "N")) -> Open_Cust_Ord
@@ -193,7 +182,7 @@ reshape2::dcast(Open_Cust_Ord, ref ~ next_28_days, value.var = "Qty", sum) -> Op
 
 # Read JDE BoM ----
 
-jde_bom <- read_excel("C:/Users/SLee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 22/BoM Report Automation/BoM version 2/JDE BoM.xlsx", 
+jde_bom <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/test/JDE BoM 07.27.22.xlsx", 
                            col_names = FALSE)
 
 
@@ -215,7 +204,7 @@ colnames(jde_bom)[13] <- "Quantity_w_Scrap"
 
 # AS400-86 ----
 
-as400_86 <- read_excel("C:/Users/SLee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 22/BoM Report Automation/BoM version 2/AS400 loc 86 BoM.xlsx", 
+as400_86 <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/test/AS400 loc 86 BoM.xlsx", 
                        col_names = FALSE)
 
 
@@ -286,7 +275,7 @@ parent_count_2[-which(duplicated(parent_count_2$Component)),] -> parent_count_2
 
 # Inventory from MicroStrategy (FG) ----
 
-FG <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Inventory Report for all locations - 07.20.22.xlsx", 
+FG <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/test/Inventory Report for all locations - 07.27.22.xlsx", 
                 col_names = FALSE,
                 sheet = "FG")
 
@@ -308,7 +297,7 @@ colnames(FG)[8] <- "Current_Inventory_Balance"
 
 # Inventory from MicroStrategy (RM) ----
 
-RM <- read_excel("C:/Users/SLee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 22/BoM Report Automation/BoM version 2/Inventory_micro.xlsx", 
+RM <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/test/Inventory Report for all locations - 07.27.22.xlsx", 
                  col_names = FALSE,
                  sheet = "RM")
 
@@ -332,10 +321,11 @@ colnames(RM)[8] <- "Current_Inventory_Balance"
 rbind(FG, RM) -> inventory_micro
 
 
-inventory_micro %<>% 
-  dplyr::mutate(ref = paste0(Location, "_", Item),
+inventory_micro %>% 
+  dplyr::mutate(Item = gsub("-", "", Item),  
+                ref = paste0(Location, "_", Item),
                 campus_ref = paste0(Mfg_Location_campus, "_", Item)) %>% 
-  dplyr::relocate(ref, campus_ref)
+  dplyr::relocate(ref, campus_ref) -> inventory_micro
 
 
 readr::type_convert(inventory_micro) -> inventory_micro
@@ -350,7 +340,10 @@ reshape2::dcast(inventory_micro, campus_ref ~ Hold_Status , value.var = "Current
   dplyr::rename(ref = campus_ref) %>% 
   dplyr::mutate(comp_ref = ref) -> inventory_micro_pivot
 
-
+inventory_micro_pivot %>% 
+  dplyr::rename(Soft_Hold = "Soft Hold",
+                Useable_temp = Useable) %>% 
+  dplyr::mutate(Useable = Soft_Hold + Useable_temp) -> inventory_micro_pivot
 
 
 ############################################################################################################################
@@ -484,14 +477,43 @@ merge(jde_bom, weeks_on_hand[, c("comp_ref", "weeks_on_hand")], by = "comp_ref",
   dplyr::rename(RM_Total_Weeks_on_Hand = weeks_on_hand) -> jde_bom
 
 
+######################################################################################################################
+############################################## Adding new step 7/26/22 ###############################################
+######################################################################################################################
+
+# Adding SKU Status (from exception report)
+
+exception_report <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/test/exception report 07.27.22.xlsx")
+
+exception_report[-1:-2, ] -> exception_report
+colnames(exception_report) <- exception_report[1, ]
+exception_report[-1, -32] -> exception_report
+
+names(exception_report) <- str_replace_all(names(exception_report), c(" " = "_"))
+
+colnames(exception_report)[1] <- "Loc"
+colnames(exception_report)[2] <- "Item"
+
+# ref
+exception_report %>% 
+  dplyr::mutate(ref = paste0(Loc, "_", Item)) %>% 
+  dplyr::relocate(ref) -> exception_report
+
+# campus_ref
+merge(exception_report, Campus_ref[, c("Loc", "Campus")], by = "Loc", all.x = TRUE) %>% 
+  dplyr::mutate(campus_ref = paste0(Campus, "_", Item)) -> exception_report
+
+
+
+
+
+
 
 ######################################################################################################################
 ##################################################### final touch ####################################################
 ######################################################################################################################
-a$where_used_count_per_loc
 
 jde_bom %>% 
-  dplyr::select(-Unit_Cost) %>% 
   dplyr::mutate(ref = gsub("_", "-", ref),
                 comp_ref = gsub("_", "-", comp_ref)) %>% 
   dplyr::relocate(ref, comp_ref, where_used_count_per_loc, where_used_count_all_loc, Business_Unit, Level, Parent_Item_Number,
