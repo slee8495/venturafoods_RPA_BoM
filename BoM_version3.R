@@ -315,6 +315,9 @@ colnames(RM)[6] <- "Inventory_Status_Code"
 colnames(RM)[7] <- "Hold_Status"
 colnames(RM)[8] <- "Current_Inventory_Balance"
 
+RM %>% 
+  dplyr::mutate(Item = sub("^0+", "", Item)) -> RM
+
 
 # combine FG, RM
 
@@ -330,11 +333,10 @@ inventory_micro %>%
 
 readr::type_convert(inventory_micro) -> inventory_micro
 
-inventory_micro %<>% 
-  dplyr::mutate(Current_Inventory_Balance = replace(Current_Inventory_Balance, is.na(Current_Inventory_Balance), 0)) 
+inventory_micro %>% 
+  dplyr::mutate(Current_Inventory_Balance = replace(Current_Inventory_Balance, is.na(Current_Inventory_Balance), 0)) -> inventory_micro
 
 # inventory_micro_pivot
-
 
 reshape2::dcast(inventory_micro, campus_ref ~ Hold_Status , value.var = "Current_Inventory_Balance", sum) %>% 
   dplyr::rename(ref = campus_ref) %>% 
