@@ -41,7 +41,7 @@ colnames(Campus_ref)[2] <- "Description"
 colnames(Campus_ref)[3] <- "Campus_Name"
 colnames(Campus_ref)[4] <- "Campus"
 
-# Category (From BI) ---- 
+# (Path revision needed) Category (From BI) ---- 
 category_bi <- read_excel("S:/Supply Chain Projects/RStudio/Category from BI/Category and Platform and pack size - 07.27.22.xlsx")
 
 category_bi[-1, ] -> category_bi
@@ -56,7 +56,41 @@ category_bi %>%
   dplyr::mutate(Item = gsub("-", "", Item)) -> category_bi
 
 
-# DSX Forecast backup ----
+# (Path revision needed) Inventory Model  (Make sure to remove the password of the original .xlsx file) ----
+# Make sure with the password
+
+inventory_model <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/Safety Stock Compliance/Automation/Test 2/SS Optimization by Location - Finished Goods July 2022.xlsx",
+                              col_names = FALSE, sheet = "Fin Goods")
+
+inventory_model[-1:-7, ] -> inventory_model
+colnames(inventory_model) <- inventory_model[1, ]
+inventory_model[-1, ] -> inventory_model
+
+inventory_model %>% 
+  dplyr::select("Ship Ref", "Net Wt") %>% 
+  dplyr::rename(ref = "Ship Ref",
+                Net_wt = "Net Wt") %>% 
+  dplyr::mutate(ref = gsub("-", "_", ref),
+                Net_wt = as.numeric(Net_wt)) -> inventory_model
+
+# (Path revision needed) IOM MicroStrategy ----
+IOM_micro <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/IOM Data Extract - 08.01.22.xlsx")
+
+IOM_micro[-1, ] -> IOM_micro
+colnames(IOM_micro) <- IOM_micro[1, ]
+IOM_micro[-1, ] -> IOM_micro
+
+IOM_micro %>% 
+  dplyr::select("Product Label (SKU)", "FG Net Weight") %>% 
+  dplyr::rename(Parent_Item_Number = "Product Label (SKU)",
+                Net_wt = "FG Net Weight") %>% 
+  dplyr::mutate(Net_wt = as.numeric(Net_wt),
+                Parent_Item_Number = gsub("-", "", Parent_Item_Number)) -> IOM_micro
+
+
+
+
+# (Path revision needed) DSX Forecast backup ----
 
 DSX_Forecast_Backup <- read_excel(
   "S:/Global Shared Folders/Large Documents/S&OP/Demand Planning/Demand Planning Team/BI Forecast Backup/DSX Forecast Backup - 2022.07.27.xlsx")
@@ -124,7 +158,7 @@ colnames(DSX_pivot_1)[8]  <- "Mon_f_fcst"
 colnames(DSX_pivot_1)[9]  <- "Mon_g_fcst"
 
 
-# Opencustord ----
+# (Path revision needed) Opencustord ----
 
 Open_Cust_Ord <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/test/wo receipt custord po - 07.27.22.xlsx", 
                             sheet = "custord", col_names = FALSE)
@@ -152,7 +186,7 @@ Open_Cust_Ord %>%
 
 
 
-# Sales and Open orders cube from Micro (Canada only) ----
+# (Path revision needed) Sales and Open orders cube from Micro (Canada only) ----
 
 canada_micro <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/test/Loc 624 open order - 07.27.22.xlsx", 
                            col_names = FALSE)
@@ -194,7 +228,7 @@ reshape2::dcast(Open_Cust_Ord, ref ~ next_28_days, value.var = "Qty", sum) -> Op
 
 
 
-# Read JDE BoM ----
+# (Path revision needed) Read JDE BoM ----
 
 jde_bom <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/test/JDE BoM 07.27.22.xlsx", 
                       col_names = FALSE)
@@ -216,7 +250,7 @@ jde_bom %<>%
 colnames(jde_bom)[13] <- "Quantity_w_Scrap"
 
 
-# AS400-86 ----
+# (Path revision needed) AS400-86 ----
 
 as400_86 <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/test/AS400 loc 86 BoM.xlsx", 
                        col_names = FALSE)
@@ -287,7 +321,7 @@ parent_count_2[-which(duplicated(parent_count_2$Component)),] -> parent_count_2
 
 
 
-# Inventory from MicroStrategy (FG) ----
+# (Path revision needed) Inventory from MicroStrategy (FG) ----
 
 FG <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/test/Inventory Report for all locations - 07.27.22.xlsx", 
                  col_names = FALSE,
@@ -309,7 +343,7 @@ colnames(FG)[8] <- "Current_Inventory_Balance"
 
 
 
-# Inventory from MicroStrategy (RM) ----
+# (Path revision needed) Inventory from MicroStrategy (RM) ----
 
 RM <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/test/Inventory Report for all locations - 07.27.22.xlsx", 
                  col_names = FALSE,
@@ -543,12 +577,55 @@ category_bi %>%
   dplyr::mutate(Parent_Item_Number = Item) -> category_bi
 category_bi[-which(duplicated(category_bi$Parent_Item_Number)),] -> category_bi
 
-merge(jde_bom, category_bi[, c("Parent_Item_Number", "Category")], by = "Parent_Item_Number", all.x = TRUE) -> j
+merge(jde_bom, category_bi[, c("Parent_Item_Number", "Category")], by = "Parent_Item_Number", all.x = TRUE) -> jde_bom
 
-# there are many NAs in Category column...10:52
+# Net wt
+merge(jde_bom, inventory_model[, c("ref", "Net_wt")], by = "ref", all.x = TRUE) -> jde_bom
+
+# Net wt N/A
+# split the data
+jde_bom %>% 
+  dplyr::filter(!is.na(Net_wt)) -> jde_bom_net_wt_1
+
+jde_bom %>% 
+  dplyr::filter(is.na(Net_wt)) -> jde_bom_net_wt_2
+
+merge(jde_bom_net_wt_2, IOM_micro[, c("Parent_Item_Number", "Net_wt")], by = "Parent_Item_Number", all.x = TRUE) -> jde_bom_net_wt_2
+
+jde_bom_net_wt_2 %>% 
+  dplyr::select(-Net_wt.x) %>% 
+  dplyr::rename(Net_wt = Net_wt.y) -> jde_bom_net_wt_2
+
+rbind(jde_bom_net_wt_1, jde_bom_net_wt_2) -> jde_bom
+
+# Label
+jde_bom$Parent_Item_Number -> temp_item
+substr(temp_item, nchar(temp_item)-2, nchar(temp_item)) -> temp_item_2
+data.frame(temp_item_2) -> temp_item_2
+cbind(jde_bom, temp_item_2) -> jde_bom
+
+jde_bom %>% 
+  dplyr::rename(Label = temp_item_2) -> jde_bom
 
 
-
+# tidy the numbers
+jde_bom %>% 
+  dplyr::mutate(Quantity_Per = round(Quantity_Per, 2),
+                Quantity_w_Scrap = round(Quantity_w_Scrap, 2),
+                Unit_Cost = round(Unit_Cost, 2),
+                Mon_a_fcst = round(Mon_a_fcst, 2),
+                Mon_b_fcst = round(Mon_b_fcst, 2),
+                Mon_c_fcst = round(Mon_c_fcst, 2),
+                Mon_d_fcst = round(Mon_d_fcst, 2),
+                Mon_e_fcst = round(Mon_e_fcst, 2),
+                Mon_f_fcst = round(Mon_f_fcst, 2),
+                mon_a_dep_demand = round(mon_a_dep_demand, 2),
+                mon_b_dep_demand = round(mon_b_dep_demand, 2),
+                mon_c_dep_demand = round(mon_c_dep_demand, 2),
+                mon_d_dep_demand = round(mon_d_dep_demand, 2),
+                mon_e_dep_demand = round(mon_e_dep_demand, 2),
+                mon_f_dep_demand = round(mon_f_dep_demand, 2),
+                FG_Weeks_On_Hand = round(FG_Weeks_On_Hand, 2)) -> jde_bom
 
 ######################################################################################################################
 ##################################################### final touch ####################################################
@@ -557,9 +634,9 @@ merge(jde_bom, category_bi[, c("Parent_Item_Number", "Category")], by = "Parent_
 jde_bom %>% 
   dplyr::mutate(ref = gsub("_", "-", ref),
                 comp_ref = gsub("_", "-", comp_ref)) %>% 
-  dplyr::relocate(ref, comp_ref, where_used_count_per_loc, where_used_count_all_loc, Business_Unit, Level, Parent_Item_Number,
-                  Parent_Description, UOM, FG_On_Hand, FG_Weeks_On_Hand, Component, Component_Description, Commodity_Class,
-                  UM, RM_On_Hand, RM_Total_Weeks_on_Hand, Stocking_Type, Percent_Scrap, Quantity_Per, Quantity_w_Scrap,
+  dplyr::relocate(ref, comp_ref, Sku_Status, Category, Label, where_used_count_per_loc, where_used_count_all_loc, Business_Unit, Level, Parent_Item_Number,
+                  Parent_Description, UOM, Net_wt ,FG_On_Hand, FG_Weeks_On_Hand, Component, Component_Description, Commodity_Class,
+                  UM, Lead_time, RM_On_Hand, RM_Total_Weeks_on_Hand, Stocking_Type, Percent_Scrap, Quantity_Per, Quantity_w_Scrap, Unit_Cost,
                   next_28_days_open_order, Mon_a_fcst, Mon_b_fcst, Mon_c_fcst, Mon_d_fcst, Mon_e_fcst, Mon_f_fcst,
                   mon_a_dep_demand, mon_b_dep_demand, mon_c_dep_demand, mon_d_dep_demand, mon_e_dep_demand, mon_f_dep_demand) %>% 
   dplyr::mutate(FG_Weeks_On_Hand = round(FG_Weeks_On_Hand, 1),
@@ -585,41 +662,48 @@ jde_bom %>%
 
 colnames(jde_bom)[1]<-"ref"
 colnames(jde_bom)[2]<-"comp ref"
-colnames(jde_bom)[3]<-"where used count (per loc)"
-colnames(jde_bom)[4]<-"where used count (all loc)"
-colnames(jde_bom)[5]<-"Business Unit"
-colnames(jde_bom)[6]<-"Level"
-colnames(jde_bom)[7]<-"Parent Item Number"
-colnames(jde_bom)[8]<-"Parent Description"
-colnames(jde_bom)[9]<-"UOM"
-colnames(jde_bom)[10]<-"FG On Hand"
-colnames(jde_bom)[11]<-"FG Weeks on Hand"
-colnames(jde_bom)[12]<-"Component"
-colnames(jde_bom)[13]<-"Component Description"
-colnames(jde_bom)[14]<-"Commodity Class"
-colnames(jde_bom)[15]<-"UM"
-colnames(jde_bom)[16]<-"RM On Hand"
-colnames(jde_bom)[17]<-"RM Total Weeks on Hand"
-colnames(jde_bom)[18]<-"Stocking Type"
-colnames(jde_bom)[19]<-"Percent Scrap"
-colnames(jde_bom)[20]<-"Quantity Per"
-colnames(jde_bom)[21]<-"Quantity w/ Scrap"
-colnames(jde_bom)[22]<-"next 28 days open order"
-colnames(jde_bom)[23]<-"mon_a fcst"
-colnames(jde_bom)[24]<-"mon_b fcst"
-colnames(jde_bom)[25]<-"mon_c fcst"
-colnames(jde_bom)[26]<-"mon_d fcst"
-colnames(jde_bom)[27]<-"mon_e fcst"
-colnames(jde_bom)[28]<-"mon_f fcst"
-colnames(jde_bom)[29]<-"mon_a dep demand"
-colnames(jde_bom)[30]<-"mon_b dep demand"
-colnames(jde_bom)[31]<-"mon_c dep demand"
-colnames(jde_bom)[32]<-"mon_d dep demand"
-colnames(jde_bom)[33]<-"mon_e dep demand"
-colnames(jde_bom)[34]<-"mon_f dep demand"
+colnames(jde_bom)[3]<-"SKU Status"
+colnames(jde_bom)[4]<-"Category"
+colnames(jde_bom)[5]<-"Label"
+colnames(jde_bom)[6]<-"where used count (per loc)"
+colnames(jde_bom)[7]<-"where used count (all loc)"
+colnames(jde_bom)[8]<-"Business Unit"
+colnames(jde_bom)[9]<-"Level"
+colnames(jde_bom)[10]<-"Parent Item Number"
+colnames(jde_bom)[11]<-"Parent Description"
+colnames(jde_bom)[12]<-"UOM"
+colnames(jde_bom)[13]<-"Net_wt"
+colnames(jde_bom)[14]<-"FG On Hand"
+colnames(jde_bom)[15]<-"FG Weeks on Hand"
+colnames(jde_bom)[16]<-"Component"
+colnames(jde_bom)[17]<-"Component Description"
+colnames(jde_bom)[18]<-"Commodity Class"
+colnames(jde_bom)[19]<-"UM"
+colnames(jde_bom)[20]<-"Lead Time"
+colnames(jde_bom)[21]<-"RM On Hand"
+colnames(jde_bom)[22]<-"RM Total Weeks on Hand"
+colnames(jde_bom)[23]<-"Stocking Type"
+colnames(jde_bom)[24]<-"Percent Scrap"
+colnames(jde_bom)[25]<-"Quantity Per"
+colnames(jde_bom)[26]<-"Quantity w/ Scrap"
+colnames(jde_bom)[27]<-"Unit Cost"
+colnames(jde_bom)[28]<-"next 28 days open order"
+colnames(jde_bom)[29]<-"mon_a fcst"
+colnames(jde_bom)[30]<-"mon_b fcst"
+colnames(jde_bom)[31]<-"mon_c fcst"
+colnames(jde_bom)[32]<-"mon_d fcst"
+colnames(jde_bom)[33]<-"mon_e fcst"
+colnames(jde_bom)[34]<-"mon_f fcst"
+colnames(jde_bom)[35]<-"mon_a dep demand"
+colnames(jde_bom)[36]<-"mon_b dep demand"
+colnames(jde_bom)[37]<-"mon_c dep demand"
+colnames(jde_bom)[38]<-"mon_d dep demand"
+colnames(jde_bom)[39]<-"mon_e dep demand"
+colnames(jde_bom)[40]<-"mon_f dep demand"
 
 
 writexl::write_xlsx(jde_bom, "Bill of Material.xlsx")
+
 
 
 
