@@ -545,7 +545,7 @@ category_bi[-which(duplicated(category_bi$Parent_Item_Number)),] -> category_bi
 
 merge(jde_bom, category_bi[, c("Parent_Item_Number", "Category")], by = "Parent_Item_Number", all.x = TRUE) -> j
 
-# there are many NAs in Category column...
+# there are many NAs in Category column...10:52
 
 
 
