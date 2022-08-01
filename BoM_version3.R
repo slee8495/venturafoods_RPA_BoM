@@ -41,6 +41,20 @@ colnames(Campus_ref)[2] <- "Description"
 colnames(Campus_ref)[3] <- "Campus_Name"
 colnames(Campus_ref)[4] <- "Campus"
 
+# Category (From BI) ---- 
+category_bi <- read_excel("S:/Supply Chain Projects/RStudio/Category from BI/Category and Platform and pack size - 07.27.22.xlsx")
+
+category_bi[-1, ] -> category_bi
+colnames(category_bi) <- category_bi[1, ]
+category_bi[-1, ] -> category_bi
+
+category_bi %>% 
+  dplyr::select(1, 3, 6) %>% 
+  dplyr::rename(Item = "SKU Code",
+                Category = "Product Category Name",
+                Platform = "Product Platform Description") %>% 
+  dplyr::mutate(Item = gsub("-", "", Item)) -> category_bi
+
 
 # DSX Forecast backup ----
 
@@ -506,7 +520,32 @@ merge(exception_report, Campus_ref[, c("Loc", "Campus")], by = "Loc", all.x = TR
   dplyr::mutate(campus_ref = paste0(Campus, "_", Item)) -> exception_report
 
 
+#### back to jde_bom
+# Sku Status
+merge(jde_bom, exception_report[, c("ref", "ref")], by = "ref", all.x = TRUE) %>% 
+  dplyr::rename(Sku_Status = ref.1) %>% 
+  dplyr::mutate(Sku_Status = ifelse(!is.na(Sku_Status), "Active", "Inactive")) -> jde_bom
 
+
+# Lead Time
+exception_report %>% 
+  dplyr::mutate(comp_ref = campus_ref) -> exception_report
+
+exception_report[-which(duplicated(exception_report$Leadtime_Days)),] -> exception_report
+
+merge(jde_bom, exception_report[, c("comp_ref", "Leadtime_Days")], by = "comp_ref", all.x = TRUE) %>% 
+  dplyr::rename(Lead_time = Leadtime_Days) %>%
+  dplyr::mutate(Lead_time = replace(Lead_time, is.na(Lead_time), 0)) -> jde_bom
+
+
+# category
+category_bi %>% 
+  dplyr::mutate(Parent_Item_Number = Item) -> category_bi
+category_bi[-which(duplicated(category_bi$Parent_Item_Number)),] -> category_bi
+
+merge(jde_bom, category_bi[, c("Parent_Item_Number", "Category")], by = "Parent_Item_Number", all.x = TRUE) -> j
+
+# there are many NAs in Category column...
 
 
 
