@@ -565,7 +565,7 @@ merge(jde_bom, exception_report[, c("ref", "ref")], by = "ref", all.x = TRUE) %>
 exception_report %>% 
   dplyr::mutate(comp_ref = campus_ref) -> exception_report
 
-exception_report[-which(duplicated(exception_report$Leadtime_Days)),] -> exception_report
+exception_report[-which(duplicated(exception_report$comp_ref)),] -> exception_report
 
 merge(jde_bom, exception_report[, c("comp_ref", "Leadtime_Days")], by = "comp_ref", all.x = TRUE) %>% 
   dplyr::rename(Lead_time = Leadtime_Days) %>%
