@@ -42,7 +42,7 @@ colnames(Campus_ref)[3] <- "Campus_Name"
 colnames(Campus_ref)[4] <- "Campus"
 
 # (Path revision needed) Category (From BI) ---- 
-category_bi <- read_excel("S:/Supply Chain Projects/RStudio/Category from BI/Category and Platform and pack size - 07.27.22.xlsx")
+category_bi <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/version 4/BI Category and Platform and pack size.xlsx")
 
 category_bi[-1, ] -> category_bi
 colnames(category_bi) <- category_bi[1, ]
@@ -59,7 +59,7 @@ category_bi %>%
 # (Path revision needed) Inventory Model  (Make sure to remove the password of the original .xlsx file) ----
 # Make sure with the password
 
-inventory_model <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/Safety Stock Compliance/Automation/Test 2/SS Optimization by Location - Finished Goods July 2022.xlsx",
+inventory_model <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/Shippable Tool Creation/Automation/SS Optimization by Location - Finished Goods August 2022.xlsx",
                               col_names = FALSE, sheet = "Fin Goods")
 
 inventory_model[-1:-7, ] -> inventory_model
@@ -74,7 +74,7 @@ inventory_model %>%
                 Net_wt = as.numeric(Net_wt)) -> inventory_model
 
 # (Path revision needed) IOM MicroStrategy ----
-IOM_micro <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/IOM Data Extract - 08.01.22.xlsx")
+IOM_micro <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/version 4/IOM Data Extract - 08.17.22.xlsx")
 
 IOM_micro[-1, ] -> IOM_micro
 colnames(IOM_micro) <- IOM_micro[1, ]
@@ -93,7 +93,7 @@ IOM_micro %>%
 # (Path revision needed) DSX Forecast backup ----
 
 DSX_Forecast_Backup <- read_excel(
-  "S:/Global Shared Folders/Large Documents/S&OP/Demand Planning/Demand Planning Team/BI Forecast Backup/DSX Forecast Backup - 2022.07.27.xlsx")
+  "S:/Global Shared Folders/Large Documents/S&OP/Demand Planning/Demand Planning Team/BI Forecast Backup/DSX Forecast Backup - 2022.08.18.xlsx")
 
 DSX_Forecast_Backup[-1,] -> DSX_Forecast_Backup
 colnames(DSX_Forecast_Backup) <- DSX_Forecast_Backup[1, ]
@@ -156,11 +156,17 @@ colnames(DSX_pivot_1)[6]  <- "Mon_d_fcst"
 colnames(DSX_pivot_1)[7]  <- "Mon_e_fcst"
 colnames(DSX_pivot_1)[8]  <- "Mon_f_fcst"
 colnames(DSX_pivot_1)[9]  <- "Mon_g_fcst"
+colnames(DSX_pivot_1)[10]  <- "Mon_h_fcst"
+colnames(DSX_pivot_1)[11]  <- "Mon_i_fcst"
+colnames(DSX_pivot_1)[12]  <- "Mon_j_fcst"
+colnames(DSX_pivot_1)[13]  <- "Mon_k_fcst"
+colnames(DSX_pivot_1)[14]  <- "Mon_l_fcst"
+colnames(DSX_pivot_1)[15]  <- "Mon_m_fcst"
 
 
 # (Path revision needed) Opencustord ----
 
-Open_Cust_Ord <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/test/wo receipt custord po - 07.27.22.xlsx", 
+Open_Cust_Ord <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/version 4/wo receipt custord po - 08.17.22 (1).xlsx", 
                             sheet = "custord", col_names = FALSE)
 
 Open_Cust_Ord %>% 
@@ -188,7 +194,7 @@ Open_Cust_Ord %>%
 
 # (Path revision needed) Sales and Open orders cube from Micro (Canada only) ----
 
-canada_micro <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/test/Loc 624 open order - 07.27.22.xlsx", 
+canada_micro <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/version 4/Canada open order - 08.17.22.xlsx", 
                            col_names = FALSE)
 
 
@@ -230,7 +236,7 @@ reshape2::dcast(Open_Cust_Ord, ref ~ next_28_days, value.var = "Qty", sum) -> Op
 
 # (Path revision needed) Read JDE BoM ----
 
-jde_bom <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/test/JDE BoM 07.27.22.xlsx", 
+jde_bom <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/version 4/JDE BoM 08.17.22.xlsx", 
                       col_names = FALSE)
 
 
@@ -252,7 +258,7 @@ colnames(jde_bom)[13] <- "Quantity_w_Scrap"
 
 # (Path revision needed) AS400-86 ----
 
-as400_86 <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/test/AS400 loc 86 BoM.xlsx", 
+as400_86 <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/version 4/AS400 loc 86 BoM.xlsx", 
                        col_names = FALSE)
 
 
@@ -323,7 +329,7 @@ parent_count_2[-which(duplicated(parent_count_2$Component)),] -> parent_count_2
 
 # (Path revision needed) Inventory from MicroStrategy (FG) ----
 
-FG <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/test/Inventory Report for all locations - 07.27.22.xlsx", 
+FG <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/version 4/Inventory Report for all locations - 08.17.22.xlsx", 
                  col_names = FALSE,
                  sheet = "FG")
 
@@ -345,7 +351,7 @@ colnames(FG)[8] <- "Current_Inventory_Balance"
 
 # (Path revision needed) Inventory from MicroStrategy (RM) ----
 
-RM <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/test/Inventory Report for all locations - 07.27.22.xlsx", 
+RM <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/version 4/Inventory Report for all locations - 08.17.22.xlsx", 
                  col_names = FALSE,
                  sheet = "RM")
 
@@ -447,6 +453,33 @@ merge(jde_bom, DSX_pivot_1[, c("ref", "Mon_f_fcst")], by = "ref", all.x = TRUE) 
   dplyr::mutate(Mon_f_fcst = replace(Mon_f_fcst, is.na(Mon_f_fcst), 0)) -> jde_bom
 
 
+
+# next_month_fcst  (mon_g)
+merge(jde_bom, DSX_pivot_1[, c("ref", "Mon_g_fcst")], by = "ref", all.x = TRUE) %>% 
+  dplyr::mutate(Mon_g_fcst = replace(Mon_g_fcst, is.na(Mon_g_fcst), 0)) -> jde_bom
+
+
+# next_month_fcst  (mon_h)
+merge(jde_bom, DSX_pivot_1[, c("ref", "Mon_h_fcst")], by = "ref", all.x = TRUE) %>% 
+  dplyr::mutate(Mon_h_fcst = replace(Mon_h_fcst, is.na(Mon_h_fcst), 0)) -> jde_bom
+
+# next_month_fcst  (mon_i)
+merge(jde_bom, DSX_pivot_1[, c("ref", "Mon_i_fcst")], by = "ref", all.x = TRUE) %>% 
+  dplyr::mutate(Mon_i_fcst = replace(Mon_i_fcst, is.na(Mon_i_fcst), 0)) -> jde_bom
+
+# next_month_fcst  (mon_j)
+merge(jde_bom, DSX_pivot_1[, c("ref", "Mon_j_fcst")], by = "ref", all.x = TRUE) %>% 
+  dplyr::mutate(Mon_j_fcst = replace(Mon_j_fcst, is.na(Mon_j_fcst), 0)) -> jde_bom
+
+# next_month_fcst  (mon_k)
+merge(jde_bom, DSX_pivot_1[, c("ref", "Mon_k_fcst")], by = "ref", all.x = TRUE) %>% 
+  dplyr::mutate(Mon_k_fcst = replace(Mon_k_fcst, is.na(Mon_k_fcst), 0)) -> jde_bom
+
+# next_month_fcst  (mon_l)
+merge(jde_bom, DSX_pivot_1[, c("ref", "Mon_l_fcst")], by = "ref", all.x = TRUE) %>% 
+  dplyr::mutate(Mon_l_fcst = replace(Mon_l_fcst, is.na(Mon_l_fcst), 0)) -> jde_bom
+
+
 # mon_a_dep_demand 
 jde_bom %>% 
   dplyr::mutate(mon_a_dep_demand = pmax(next_28_days_open_order, Mon_a_fcst) * Quantity_w_Scrap) -> jde_bom
@@ -470,6 +503,36 @@ jde_bom %>%
 # mon_f_dep_demand
 jde_bom %>% 
   dplyr::mutate(mon_f_dep_demand = Mon_f_fcst * Quantity_w_Scrap) -> jde_bom
+
+
+# mon_g_dep_demand
+jde_bom %>% 
+  dplyr::mutate(mon_g_dep_demand = Mon_g_fcst * Quantity_w_Scrap) -> jde_bom
+
+
+# mon_h_dep_demand
+jde_bom %>% 
+  dplyr::mutate(mon_h_dep_demand = Mon_h_fcst * Quantity_w_Scrap) -> jde_bom
+
+
+# mon_i_dep_demand
+jde_bom %>% 
+  dplyr::mutate(mon_i_dep_demand = Mon_i_fcst * Quantity_w_Scrap) -> jde_bom
+
+
+# mon_j_dep_demand
+jde_bom %>% 
+  dplyr::mutate(mon_j_dep_demand = Mon_j_fcst * Quantity_w_Scrap) -> jde_bom
+
+
+# mon_k_dep_demand
+jde_bom %>% 
+  dplyr::mutate(mon_k_dep_demand = Mon_k_fcst * Quantity_w_Scrap) -> jde_bom
+
+
+# mon_l_dep_demand
+jde_bom %>% 
+  dplyr::mutate(mon_l_dep_demand = Mon_l_fcst * Quantity_w_Scrap) -> jde_bom
 
 
 # FG on Hand
@@ -531,9 +594,9 @@ merge(jde_bom, weeks_on_hand[, c("comp_ref", "weeks_on_hand")], by = "comp_ref",
 ############################################## Adding new step 7/26/22 ###############################################
 ######################################################################################################################
 
-# Adding SKU Status (from exception report)
+# Adding SKU Status (from exception report) ----
 
-exception_report <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/test/exception report 07.27.22.xlsx")
+exception_report <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/version 4/exception report 08.17.22.xlsx")
 
 exception_report[-1:-2, ] -> exception_report
 colnames(exception_report) <- exception_report[1, ]
@@ -619,12 +682,24 @@ jde_bom %>%
                 Mon_d_fcst = round(Mon_d_fcst, 2),
                 Mon_e_fcst = round(Mon_e_fcst, 2),
                 Mon_f_fcst = round(Mon_f_fcst, 2),
+                Mon_g_fcst = round(Mon_g_fcst, 2),
+                Mon_h_fcst = round(Mon_h_fcst, 2),
+                Mon_i_fcst = round(Mon_i_fcst, 2),
+                Mon_j_fcst = round(Mon_j_fcst, 2),
+                Mon_k_fcst = round(Mon_k_fcst, 2),
+                Mon_l_fcst = round(Mon_l_fcst, 2),
                 mon_a_dep_demand = round(mon_a_dep_demand, 2),
                 mon_b_dep_demand = round(mon_b_dep_demand, 2),
                 mon_c_dep_demand = round(mon_c_dep_demand, 2),
                 mon_d_dep_demand = round(mon_d_dep_demand, 2),
                 mon_e_dep_demand = round(mon_e_dep_demand, 2),
                 mon_f_dep_demand = round(mon_f_dep_demand, 2),
+                mon_g_dep_demand = round(mon_g_dep_demand, 2),
+                mon_h_dep_demand = round(mon_h_dep_demand, 2),
+                mon_i_dep_demand = round(mon_i_dep_demand, 2),
+                mon_j_dep_demand = round(mon_j_dep_demand, 2),
+                mon_k_dep_demand = round(mon_k_dep_demand, 2),
+                mon_l_dep_demand = round(mon_l_dep_demand, 2),
                 FG_Weeks_On_Hand = round(FG_Weeks_On_Hand, 2)) -> jde_bom
 
 ######################################################################################################################
@@ -694,12 +769,24 @@ colnames(jde_bom)[31]<-"mon_c fcst"
 colnames(jde_bom)[32]<-"mon_d fcst"
 colnames(jde_bom)[33]<-"mon_e fcst"
 colnames(jde_bom)[34]<-"mon_f fcst"
-colnames(jde_bom)[35]<-"mon_a dep demand"
-colnames(jde_bom)[36]<-"mon_b dep demand"
-colnames(jde_bom)[37]<-"mon_c dep demand"
-colnames(jde_bom)[38]<-"mon_d dep demand"
-colnames(jde_bom)[39]<-"mon_e dep demand"
-colnames(jde_bom)[40]<-"mon_f dep demand"
+colnames(jde_bom)[35]<-"mon_g fcst"
+colnames(jde_bom)[36]<-"mon_h fcst"
+colnames(jde_bom)[37]<-"mon_i fcst"
+colnames(jde_bom)[38]<-"mon_j fcst"
+colnames(jde_bom)[39]<-"mon_k fcst"
+colnames(jde_bom)[40]<-"mon_l fcst"
+colnames(jde_bom)[41]<-"mon_a dep demand"
+colnames(jde_bom)[42]<-"mon_b dep demand"
+colnames(jde_bom)[43]<-"mon_c dep demand"
+colnames(jde_bom)[44]<-"mon_d dep demand"
+colnames(jde_bom)[45]<-"mon_e dep demand"
+colnames(jde_bom)[46]<-"mon_f dep demand"
+colnames(jde_bom)[47]<-"mon_g dep demand"
+colnames(jde_bom)[48]<-"mon_h dep demand"
+colnames(jde_bom)[49]<-"mon_i dep demand"
+colnames(jde_bom)[50]<-"mon_j dep demand"
+colnames(jde_bom)[51]<-"mon_k dep demand"
+colnames(jde_bom)[52]<-"mon_l dep demand"
 
 
 writexl::write_xlsx(jde_bom, "Bill of Material.xlsx")
