@@ -712,8 +712,10 @@ jde_bom %>%
   dplyr::relocate(ref, comp_ref, Sku_Status, Category, Label, where_used_count_per_loc, where_used_count_all_loc, Business_Unit, Level, Parent_Item_Number,
                   Parent_Description, UOM, Net_wt ,FG_On_Hand, FG_Weeks_On_Hand, Component, Component_Description, Commodity_Class,
                   UM, Lead_time, RM_On_Hand, RM_Total_Weeks_on_Hand, Stocking_Type, Percent_Scrap, Quantity_Per, Quantity_w_Scrap, Unit_Cost,
-                  next_28_days_open_order, Mon_a_fcst, Mon_b_fcst, Mon_c_fcst, Mon_d_fcst, Mon_e_fcst, Mon_f_fcst,
-                  mon_a_dep_demand, mon_b_dep_demand, mon_c_dep_demand, mon_d_dep_demand, mon_e_dep_demand, mon_f_dep_demand) %>% 
+                  next_28_days_open_order, Mon_a_fcst, Mon_b_fcst, Mon_c_fcst, Mon_d_fcst, Mon_e_fcst, Mon_f_fcst, Mon_g_fcst, Mon_h_fcst,
+                  Mon_i_fcst, Mon_j_fcst, Mon_k_fcst, Mon_l_fcst,
+                  mon_a_dep_demand, mon_b_dep_demand, mon_c_dep_demand, mon_d_dep_demand, mon_e_dep_demand, mon_f_dep_demand,
+                  mon_g_dep_demand, mon_h_dep_demand, mon_i_dep_demand, mon_j_dep_demand, mon_k_dep_demand, mon_l_dep_demand) %>% 
   dplyr::mutate(FG_Weeks_On_Hand = round(FG_Weeks_On_Hand, 1),
                 Quantity_Per = round(Quantity_Per, 3),
                 Quantity_w_Scrap = round(Quantity_w_Scrap, 3),
@@ -723,12 +725,24 @@ jde_bom %>%
                 Mon_d_fcst = round(Mon_d_fcst, 0),
                 Mon_e_fcst = round(Mon_e_fcst, 0),
                 Mon_f_fcst = round(Mon_f_fcst, 0),
+                Mon_g_fcst = round(Mon_g_fcst, 0),
+                Mon_h_fcst = round(Mon_h_fcst, 0),
+                Mon_i_fcst = round(Mon_i_fcst, 0),
+                Mon_j_fcst = round(Mon_j_fcst, 0),
+                Mon_k_fcst = round(Mon_k_fcst, 0),
+                Mon_l_fcst = round(Mon_l_fcst, 0),
                 mon_a_dep_demand = round(mon_a_dep_demand, 0),
                 mon_b_dep_demand = round(mon_b_dep_demand, 0),
                 mon_c_dep_demand = round(mon_c_dep_demand, 0),
                 mon_d_dep_demand = round(mon_d_dep_demand, 0),
                 mon_e_dep_demand = round(mon_e_dep_demand, 0),
-                mon_f_dep_demand = round(mon_f_dep_demand, 0)) %>% 
+                mon_f_dep_demand = round(mon_f_dep_demand, 0),
+                mon_g_dep_demand = round(mon_g_dep_demand, 0),
+                mon_h_dep_demand = round(mon_h_dep_demand, 0),
+                mon_i_dep_demand = round(mon_i_dep_demand, 0),
+                mon_j_dep_demand = round(mon_j_dep_demand, 0),
+                mon_k_dep_demand = round(mon_k_dep_demand, 0),
+                mon_l_dep_demand = round(mon_l_dep_demand, 0)) %>% 
   dplyr::mutate(Component = as.integer(Component)) -> jde_bom
 
 
