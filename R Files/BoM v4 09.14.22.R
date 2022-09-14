@@ -560,17 +560,14 @@ merge(jde_bom, inventory_micro_pivot[, c("comp_ref", "Useable")], by = "comp_ref
 # weeks on hand pivot
 
 reshape2::dcast(jde_bom, comp_ref + RM_On_Hand ~ . , value.var = "mon_a_dep_demand", sum) %>% 
-  dplyr::rename(sum_month_a_dep_demand = ".") %>% 
-  dplyr::mutate(sum_month_a_dep_demand = round(sum_month_a_dep_demand, 2)) -> mon_a_rm_pivot
+  dplyr::rename(sum_month_a_dep_demand = ".") -> mon_a_rm_pivot
 
 reshape2::dcast(jde_bom, comp_ref + RM_On_Hand ~ . , value.var = "mon_b_dep_demand", sum) %>% 
   dplyr::rename(sum_month_b_dep_demand = ".") %>% 
-  dplyr::mutate(sum_month_b_dep_demand = round(sum_month_b_dep_demand, 2)) %>% 
   dplyr::select(-comp_ref, -RM_On_Hand) -> mon_b_rm_pivot
 
 reshape2::dcast(jde_bom, comp_ref + RM_On_Hand ~ . , value.var = "mon_c_dep_demand", sum) %>% 
   dplyr::rename(sum_month_c_dep_demand = ".") %>% 
-  dplyr::mutate(sum_month_c_dep_demand = round(sum_month_c_dep_demand, 2)) %>% 
   dplyr::select(-comp_ref, -RM_On_Hand) -> mon_c_rm_pivot
 
 
@@ -673,9 +670,7 @@ jde_bom %>%
 
 # tidy the numbers
 jde_bom %>% 
-  dplyr::mutate(Quantity_Per = round(Quantity_Per, 2),
-                Quantity_w_Scrap = round(Quantity_w_Scrap, 2),
-                Unit_Cost = round(Unit_Cost, 2),
+  dplyr::mutate(Unit_Cost = round(Unit_Cost, 2),
                 Mon_a_fcst = round(Mon_a_fcst, 2),
                 Mon_b_fcst = round(Mon_b_fcst, 2),
                 Mon_c_fcst = round(Mon_c_fcst, 2),
@@ -688,18 +683,6 @@ jde_bom %>%
                 Mon_j_fcst = round(Mon_j_fcst, 2),
                 Mon_k_fcst = round(Mon_k_fcst, 2),
                 Mon_l_fcst = round(Mon_l_fcst, 2),
-                mon_a_dep_demand = round(mon_a_dep_demand, 2),
-                mon_b_dep_demand = round(mon_b_dep_demand, 2),
-                mon_c_dep_demand = round(mon_c_dep_demand, 2),
-                mon_d_dep_demand = round(mon_d_dep_demand, 2),
-                mon_e_dep_demand = round(mon_e_dep_demand, 2),
-                mon_f_dep_demand = round(mon_f_dep_demand, 2),
-                mon_g_dep_demand = round(mon_g_dep_demand, 2),
-                mon_h_dep_demand = round(mon_h_dep_demand, 2),
-                mon_i_dep_demand = round(mon_i_dep_demand, 2),
-                mon_j_dep_demand = round(mon_j_dep_demand, 2),
-                mon_k_dep_demand = round(mon_k_dep_demand, 2),
-                mon_l_dep_demand = round(mon_l_dep_demand, 2),
                 FG_Weeks_On_Hand = round(FG_Weeks_On_Hand, 2)) -> jde_bom
 
 ######################################################################################################################
@@ -717,8 +700,6 @@ jde_bom %>%
                   mon_a_dep_demand, mon_b_dep_demand, mon_c_dep_demand, mon_d_dep_demand, mon_e_dep_demand, mon_f_dep_demand,
                   mon_g_dep_demand, mon_h_dep_demand, mon_i_dep_demand, mon_j_dep_demand, mon_k_dep_demand, mon_l_dep_demand) %>% 
   dplyr::mutate(FG_Weeks_On_Hand = round(FG_Weeks_On_Hand, 1),
-                Quantity_Per = round(Quantity_Per, 3),
-                Quantity_w_Scrap = round(Quantity_w_Scrap, 3),
                 Mon_a_fcst = round(Mon_a_fcst, 0),
                 Mon_b_fcst = round(Mon_b_fcst, 0),
                 Mon_c_fcst = round(Mon_c_fcst, 0),
@@ -730,19 +711,7 @@ jde_bom %>%
                 Mon_i_fcst = round(Mon_i_fcst, 0),
                 Mon_j_fcst = round(Mon_j_fcst, 0),
                 Mon_k_fcst = round(Mon_k_fcst, 0),
-                Mon_l_fcst = round(Mon_l_fcst, 0),
-                mon_a_dep_demand = round(mon_a_dep_demand, 0),
-                mon_b_dep_demand = round(mon_b_dep_demand, 0),
-                mon_c_dep_demand = round(mon_c_dep_demand, 0),
-                mon_d_dep_demand = round(mon_d_dep_demand, 0),
-                mon_e_dep_demand = round(mon_e_dep_demand, 0),
-                mon_f_dep_demand = round(mon_f_dep_demand, 0),
-                mon_g_dep_demand = round(mon_g_dep_demand, 0),
-                mon_h_dep_demand = round(mon_h_dep_demand, 0),
-                mon_i_dep_demand = round(mon_i_dep_demand, 0),
-                mon_j_dep_demand = round(mon_j_dep_demand, 0),
-                mon_k_dep_demand = round(mon_k_dep_demand, 0),
-                mon_l_dep_demand = round(mon_l_dep_demand, 0)) %>% 
+                Mon_l_fcst = round(Mon_l_fcst, 0)) %>% 
   dplyr::mutate(Component = as.integer(Component)) -> jde_bom
 
 
