@@ -14,7 +14,7 @@ library(skimr)
 ##################################################################################################################################################################
 
 
-## FG_ref_to_mpg_ref 
+## FG_ref_to_mpg_re 
 
 FG_ref_to_mfg_ref <- read_excel("S:/Supply Chain Projects/RStudio/BoM/Master formats/FG_on_Hand/FG_ref_to_mfg_ref.xlsx")
 
