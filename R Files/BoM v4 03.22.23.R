@@ -74,7 +74,7 @@ inventory_model %>%
                 Net_wt = as.numeric(Net_wt)) -> inventory_model
 
 # (Path revision needed) IOM MicroStrategy ----
-IOM_micro <- read_excel("C:/Users/lliang/OneDrive - Ventura Foods/R Studio/Source Data/IOM Data Extract - 02.22.23.xlsx")
+IOM_micro <- read_excel("C:/Users/lliang/OneDrive - Ventura Foods/R Studio/Source Data/IOM Data Extract - 03.22.23.xlsx")
 
 IOM_micro[-1, ] -> IOM_micro
 colnames(IOM_micro) <- IOM_micro[1, ]
@@ -93,7 +93,7 @@ IOM_micro %>%
 # (Path revision needed) DSX Forecast backup ----
 
 DSX_Forecast_Backup <- read_excel(
-  "S:/Global Shared Folders/Large Documents/S&OP/Demand Planning/Demand Planning Team/BI Forecast Backup/DSX Forecast Backup - 2023.03.17.xlsx")
+  "S:/Global Shared Folders/Large Documents/S&OP/Demand Planning/Demand Planning Team/BI Forecast Backup/DSX Forecast Backup - 2023.03.21.xlsx")
 
 DSX_Forecast_Backup[-1,] -> DSX_Forecast_Backup
 colnames(DSX_Forecast_Backup) <- DSX_Forecast_Backup[1, ]
@@ -185,7 +185,7 @@ DSX_pivot_1 %>%
 
 # (Path revision needed) Opencustord ----
 
-Open_Cust_Ord <- read_excel("C:/Users/lliang/OneDrive - Ventura Foods/R Studio/Source Data/wo receipt custord po - 03.17.23.xlsx", 
+Open_Cust_Ord <- read_excel("C:/Users/lliang/OneDrive - Ventura Foods/R Studio/Source Data/wo receipt custord po - 03.22.23.xlsx", 
                             sheet = "custord", col_names = FALSE)
 
 Open_Cust_Ord %>% 
@@ -213,7 +213,7 @@ Open_Cust_Ord %>%
 
 # (Path revision needed) Sales and Open orders cube from Micro (Canada only) ----
 
-canada_micro <- read_excel("C:/Users/lliang/OneDrive - Ventura Foods/R Studio/Source Data/Canada open order - 03.17.23.xlsx", 
+canada_micro <- read_excel("C:/Users/lliang/OneDrive - Ventura Foods/R Studio/Source Data/Canada open order - 03.22.23.xlsx", 
                            col_names = FALSE)
 
 
@@ -255,7 +255,7 @@ reshape2::dcast(Open_Cust_Ord, ref ~ next_28_days, value.var = "Qty", sum) -> Op
 
 # (Path revision needed) Read JDE BoM ----
 
-jde_bom <- read_excel("C:/Users/lliang/OneDrive - Ventura Foods/R Studio/Source Data/JDE BoM 03.17.23.xlsx", 
+jde_bom <- read_excel("C:/Users/lliang/OneDrive - Ventura Foods/R Studio/Source Data/JDE BoM 03.22.23.xlsx", 
                       col_names = FALSE)
 
 
@@ -348,7 +348,7 @@ parent_count_2[-which(duplicated(parent_count_2$Component)),] -> parent_count_2
 
 # (Path revision needed) Inventory from MicroStrategy (FG) ----
 
-FG <- read_excel("C:/Users/lliang/OneDrive - Ventura Foods/R Studio/Source Data/Inventory Report for all locations - 03.17.23.xlsx", 
+FG <- read_excel("C:/Users/lliang/OneDrive - Ventura Foods/R Studio/Source Data/Inventory Report for all locations - 03.22.23.xlsx", 
                  col_names = FALSE,
                  sheet = "FG")
 
@@ -370,7 +370,7 @@ colnames(FG)[8] <- "Current_Inventory_Balance"
 
 # (Path revision needed) Inventory from MicroStrategy (RM) ----
 
-RM <- read_excel("C:/Users/lliang/OneDrive - Ventura Foods/R Studio/Source Data/Inventory Report for all locations - 03.17.23.xlsx", 
+RM <- read_excel("C:/Users/lliang/OneDrive - Ventura Foods/R Studio/Source Data/Inventory Report for all locations - 03.22.23.xlsx", 
                  col_names = FALSE,
                  sheet = "RM")
 
@@ -612,7 +612,7 @@ merge(jde_bom, weeks_on_hand[, c("comp_ref", "weeks_on_hand")], by = "comp_ref",
 
 # Adding SKU Status (from exception report) ----
 
-exception_report <- read_excel("C:/Users/lliang/OneDrive - Ventura Foods/R Studio/Source Data/exception report 03.17.23.xlsx")
+exception_report <- read_excel("C:/Users/lliang/OneDrive - Ventura Foods/R Studio/Source Data/exception report 03.22.23.xlsx")
 
 exception_report[-1:-2, ] -> exception_report
 colnames(exception_report) <- exception_report[1, ]
