@@ -738,7 +738,7 @@ jde_bom %>%
 # - Category empty fill
 # - Platform add
 # - Supplier 
-# - Net wt
+# - Net wt (let's use mstr data, not inventory modeleing)
 
 
 
