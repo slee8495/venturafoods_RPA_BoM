@@ -59,6 +59,8 @@ category_bi %>%
 # (Path revision needed) Inventory Model  (Make sure to remove the password of the original .xlsx file) ----
 # Make sure with the password
 
+# S:Drive - Supply Chain Project - Logistics - SCP - Cost Saving Reporting 
+
 inventory_model_data <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/Safety Stock Compliance/Weekly Run Files/2023/4.10.23/SS Optimization by Location - Finished Goods April 2023.xlsx",
                                    col_names = FALSE, sheet = "Fin Goods")
 
@@ -74,7 +76,7 @@ inventory_model_data %>%
                 Net_wt = as.numeric(Net_wt)) -> inventory_model
 
 # (Path revision needed) IOM MicroStrategy ----
-IOM_micro <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/4.26.2023/IOM Data Extract.xlsx")
+IOM_micro <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/5.4.2023/IOM Data Extract.xlsx")
 
 IOM_micro[-1, ] -> IOM_micro
 colnames(IOM_micro) <- IOM_micro[1, ]
@@ -93,7 +95,7 @@ IOM_micro %>%
 # (Path revision needed) DSX Forecast backup ----
 
 DSX_Forecast_Backup <- read_excel(
-  "S:/Global Shared Folders/Large Documents/S&OP/Demand Planning/Demand Planning Team/BI Forecast Backup/DSX Forecast Backup - 2023.04.25.xlsx")
+  "S:/Global Shared Folders/Large Documents/S&OP/Demand Planning/Demand Planning Team/BI Forecast Backup/DSX Forecast Backup - 2023.05.04.xlsx")
 
 DSX_Forecast_Backup[-1,] -> DSX_Forecast_Backup
 colnames(DSX_Forecast_Backup) <- DSX_Forecast_Backup[1, ]
@@ -186,7 +188,7 @@ DSX_pivot_1 %>%
 # (Path revision needed) Opencustord ----
 
 Open_Cust_Ord <- read.csv("Z:/IMPORT_CUSTORDS.csv",
-                    header = FALSE)
+                          header = FALSE)
 
 Open_Cust_Ord %>% 
   dplyr::rename(aa = V1) %>% 
@@ -213,7 +215,7 @@ Open_Cust_Ord %>%
 
 # (Path revision needed) Sales and Open orders cube from Micro (Canada only) ----
 
-canada_micro <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/4.26.2023/Canada Open Orders.xlsx", 
+canada_micro <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/5.4.2023/Canada Open Orders.xlsx", 
                            col_names = FALSE)
 
 
@@ -255,7 +257,7 @@ reshape2::dcast(Open_Cust_Ord, ref ~ next_28_days, value.var = "Qty", sum) -> Op
 
 # (Path revision needed) Read JDE BoM ----
 
-jde_bom_us <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/4.26.2023/jde_bom_us.xlsx", 
+jde_bom_us <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/5.4.2023/jde_bom_us.xlsx", 
                          col_names = FALSE)
 
 
@@ -275,7 +277,7 @@ jde_bom_us %<>%
 colnames(jde_bom_us)[13] <- "Quantity_w_Scrap"
 
 
-jde_bom_canada <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/4.26.2023/jde_bom_canada.xlsx", 
+jde_bom_canada <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/5.4.2023/jde_bom_canada.xlsx", 
                              col_names = FALSE)
 
 
@@ -299,7 +301,7 @@ rbind(jde_bom_us, jde_bom_canada) -> jde_bom
 
 # (Path revision needed) AS400-86 ----
 
-as400_86 <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/4.26.2023/as400_86.xlsx", 
+as400_86 <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/5.4.2023/as400_86.xlsx", 
                        col_names = FALSE)
 
 
@@ -370,7 +372,7 @@ parent_count_2[-which(duplicated(parent_count_2$Component)),] -> parent_count_2
 
 # (Path revision needed) Inventory from MicroStrategy (FG) ----
 
-FG <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/4.26.2023/Inventory Report for all locations.xlsx", 
+FG <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/5.4.2023/Inventory Report for all locations.xlsx", 
                  col_names = FALSE,
                  sheet = "FG")
 
@@ -392,7 +394,7 @@ colnames(FG)[8] <- "Current_Inventory_Balance"
 
 # (Path revision needed) Inventory from MicroStrategy (RM) ----
 
-RM <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/4.26.2023/Inventory Report for all locations.xlsx", 
+RM <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/5.4.2023/Inventory Report for all locations.xlsx", 
                  col_names = FALSE,
                  sheet = "RM")
 
@@ -634,7 +636,7 @@ merge(jde_bom, weeks_on_hand[, c("comp_ref", "weeks_on_hand")], by = "comp_ref",
 
 # Adding SKU Status (from exception report) ----
 
-exception_report <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/4.26.2023/exception report.xlsx")
+exception_report <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/5.4.2023/exception report.xlsx")
 
 exception_report[-1:-2, ] -> exception_report
 colnames(exception_report) <- exception_report[1, ]
@@ -728,7 +730,7 @@ jde_bom %>%
 
 
 # Category & Platform
-completed_sku_list <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/4.26.2023/Completed SKU list.xlsx")
+completed_sku_list <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/5.4.2023/Completed SKU list.xlsx")
 completed_sku_list[-1:-2, ]  %>% 
   janitor::clean_names() %>% 
   dplyr::select(x6, x9, x11) %>% 
