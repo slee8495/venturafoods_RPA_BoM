@@ -871,4 +871,4 @@ colnames(jde_bom)[52]<-"mon_k dep demand"
 colnames(jde_bom)[53]<-"mon_l dep demand"
 
 
-writexl::write_xlsx(jde_bom, "Bill of Material.xlsx")
+writexl::write_xlsx(jde_bom, "Bill of Material_051023.xlsx")
