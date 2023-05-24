@@ -30,7 +30,7 @@ FG_ref_to_mfg_ref %<>%
 
 # Campus_ref pulling 
 
-Campus_ref <- read_excel("S:/Supply Chain Projects/RStudio/BoM/Master formats/RM_on_Hand/Campus_ref.xlsx", 
+Campus_ref <- read_excel("S:/Supply Chain Projects/Linda Liang/reference files/campus reference.xlsx", 
                          col_types = c("numeric", "text", "text", 
                                        "numeric"))
 
@@ -795,32 +795,18 @@ jde_bom %>%
 # Things to do
 
 # - Supplier
-Campus_ref %>% 
-  dplyr::select(Loc, Campus) %>% 
-  dplyr::rename(campus = Campus) -> campus_ref
-
 exception_report %>% 
-  dplyr::mutate(Loc = as.double(Loc)) %>% 
-  left_join(campus_ref) %>% 
-  dplyr::mutate(campus_ref = paste0(campus, "_", Item)) -> exception_report_2
-  
-
-exception_report_2 %>% 
-  dplyr::select(Loc, campus_ref, Supplier) %>% 
+  dplyr::mutate(Loc = as.double(Loc)) %>%
+  dplyr::select(Loc, Campus, campus_ref, Supplier) %>% 
   dplyr::arrange(desc(Loc)) %>% 
-  dplyr::mutate(loc_supplier = paste0(Loc, "_", Supplier)) -> exception_report_2
-
-exception_report_2[!duplicated(exception_report_2[,c("loc_supplier")]),] -> exception_report_2
-
-exception_report_2 %>% 
+  dplyr::mutate(loc_supplier = paste0(Loc, "_", Supplier)) %>% 
   dplyr::select(campus_ref, Supplier) %>% 
   dplyr::rename(comp_ref = campus_ref) -> exception_report_2
   
 
 jde_bom %>% 
-  dplyr::left_join(exception_report_2) -> tt
-
-
+  dplyr::left_join(exception_report_2) %>% 
+  dplyr::mutate(Supplier = ifelse(is.na(Supplier), "NA", Supplier)) -> jde_bom
 
 
 ######################################################################################################################
@@ -830,7 +816,7 @@ jde_bom %>%
 jde_bom %>% 
   dplyr::mutate(ref = gsub("_", "-", ref),
                 comp_ref = gsub("_", "-", comp_ref)) %>% 
-  dplyr::relocate(ref, comp_ref, Sku_Status, Category, Platform, Label, where_used_count_per_loc, where_used_count_all_loc, Business_Unit, Level, Parent_Item_Number,
+  dplyr::relocate(ref, comp_ref, Supplier, Sku_Status, Category, Platform, Label, where_used_count_per_loc, where_used_count_all_loc, Business_Unit, Level, Parent_Item_Number,
                   Parent_Description, UOM, Net_wt ,FG_On_Hand, FG_Weeks_On_Hand, Component, Component_Description, Commodity_Class,
                   UM, Lead_time, RM_On_Hand, RM_Total_Weeks_on_Hand, Stocking_Type, Percent_Scrap, Quantity_Per, Quantity_w_Scrap, Unit_Cost,
                   next_28_days_open_order, Mon_a_fcst, Mon_b_fcst, Mon_c_fcst, Mon_d_fcst, Mon_e_fcst, Mon_f_fcst, Mon_g_fcst, Mon_h_fcst,
@@ -858,57 +844,57 @@ jde_bom %>%
 
 colnames(jde_bom)[1]<-"ref"
 colnames(jde_bom)[2]<-"comp ref"
-colnames(jde_bom)[3]<-"SKU Status"
-colnames(jde_bom)[4]<-"Category"
-colnames(jde_bom)[5]<-"Platform"
-colnames(jde_bom)[6]<-"Label"
-colnames(jde_bom)[7]<-"where used count (per loc)"
-colnames(jde_bom)[8]<-"where used count (all loc)"
-colnames(jde_bom)[9]<-"Business Unit"
-colnames(jde_bom)[10]<-"Level"
-colnames(jde_bom)[11]<-"Parent Item Number"
-colnames(jde_bom)[12]<-"Parent Description"
-colnames(jde_bom)[13]<-"UOM"
-colnames(jde_bom)[14]<-"Net_wt"
-colnames(jde_bom)[15]<-"FG On Hand"
-colnames(jde_bom)[16]<-"FG Weeks on Hand"
-colnames(jde_bom)[17]<-"Component"
-colnames(jde_bom)[18]<-"Component Description"
-colnames(jde_bom)[19]<-"Commodity Class"
-colnames(jde_bom)[20]<-"UM"
-colnames(jde_bom)[21]<-"Lead Time"
-colnames(jde_bom)[22]<-"RM On Hand"
-colnames(jde_bom)[23]<-"RM Total Weeks on Hand"
-colnames(jde_bom)[24]<-"Stocking Type"
-colnames(jde_bom)[25]<-"Percent Scrap"
-colnames(jde_bom)[26]<-"Quantity Per"
-colnames(jde_bom)[27]<-"Quantity w/ Scrap"
-colnames(jde_bom)[28]<-"Unit Cost"
-colnames(jde_bom)[29]<-"next 28 days open order"
-colnames(jde_bom)[30]<-"mon_a fcst"
-colnames(jde_bom)[31]<-"mon_b fcst"
-colnames(jde_bom)[32]<-"mon_c fcst"
-colnames(jde_bom)[33]<-"mon_d fcst"
-colnames(jde_bom)[34]<-"mon_e fcst"
-colnames(jde_bom)[35]<-"mon_f fcst"
-colnames(jde_bom)[36]<-"mon_g fcst"
-colnames(jde_bom)[37]<-"mon_h fcst"
-colnames(jde_bom)[38]<-"mon_i fcst"
-colnames(jde_bom)[39]<-"mon_j fcst"
-colnames(jde_bom)[40]<-"mon_k fcst"
-colnames(jde_bom)[41]<-"mon_l fcst"
-colnames(jde_bom)[42]<-"mon_a dep demand"
-colnames(jde_bom)[43]<-"mon_b dep demand"
-colnames(jde_bom)[44]<-"mon_c dep demand"
-colnames(jde_bom)[45]<-"mon_d dep demand"
-colnames(jde_bom)[46]<-"mon_e dep demand"
-colnames(jde_bom)[47]<-"mon_f dep demand"
-colnames(jde_bom)[48]<-"mon_g dep demand"
-colnames(jde_bom)[49]<-"mon_h dep demand"
-colnames(jde_bom)[50]<-"mon_i dep demand"
-colnames(jde_bom)[51]<-"mon_j dep demand"
-colnames(jde_bom)[52]<-"mon_k dep demand"
-colnames(jde_bom)[53]<-"mon_l dep demand"
-
+colnames(jde_bom)[3]<-"Supplier"
+colnames(jde_bom)[4]<-"SKU Status"
+colnames(jde_bom)[5]<-"Category"
+colnames(jde_bom)[6]<-"Platform"
+colnames(jde_bom)[7]<-"Label"
+colnames(jde_bom)[8]<-"where used count (per loc)"
+colnames(jde_bom)[9]<-"where used count (all loc)"
+colnames(jde_bom)[10]<-"Business Unit"
+colnames(jde_bom)[11]<-"Level"
+colnames(jde_bom)[12]<-"Parent Item Number"
+colnames(jde_bom)[13]<-"Parent Description"
+colnames(jde_bom)[14]<-"UOM"
+colnames(jde_bom)[15]<-"Net_wt"
+colnames(jde_bom)[16]<-"FG On Hand"
+colnames(jde_bom)[17]<-"FG Weeks on Hand"
+colnames(jde_bom)[18]<-"Component"
+colnames(jde_bom)[19]<-"Component Description"
+colnames(jde_bom)[20]<-"Commodity Class"
+colnames(jde_bom)[21]<-"UM"
+colnames(jde_bom)[22]<-"Lead Time"
+colnames(jde_bom)[23]<-"RM On Hand"
+colnames(jde_bom)[24]<-"RM Total Weeks on Hand"
+colnames(jde_bom)[25]<-"Stocking Type"
+colnames(jde_bom)[26]<-"Percent Scrap"
+colnames(jde_bom)[27]<-"Quantity Per"
+colnames(jde_bom)[28]<-"Quantity w/ Scrap"
+colnames(jde_bom)[29]<-"Unit Cost"
+colnames(jde_bom)[30]<-"next 28 days open order"
+colnames(jde_bom)[31]<-"mon_a fcst"
+colnames(jde_bom)[32]<-"mon_b fcst"
+colnames(jde_bom)[33]<-"mon_c fcst"
+colnames(jde_bom)[34]<-"mon_d fcst"
+colnames(jde_bom)[35]<-"mon_e fcst"
+colnames(jde_bom)[36]<-"mon_f fcst"
+colnames(jde_bom)[37]<-"mon_g fcst"
+colnames(jde_bom)[38]<-"mon_h fcst"
+colnames(jde_bom)[39]<-"mon_i fcst"
+colnames(jde_bom)[40]<-"mon_j fcst"
+colnames(jde_bom)[41]<-"mon_k fcst"
+colnames(jde_bom)[42]<-"mon_l fcst"
+colnames(jde_bom)[43]<-"mon_a dep demand"
+colnames(jde_bom)[44]<-"mon_b dep demand"
+colnames(jde_bom)[45]<-"mon_c dep demand"
+colnames(jde_bom)[46]<-"mon_d dep demand"
+colnames(jde_bom)[47]<-"mon_e dep demand"
+colnames(jde_bom)[48]<-"mon_f dep demand"
+colnames(jde_bom)[49]<-"mon_g dep demand"
+colnames(jde_bom)[50]<-"mon_h dep demand"
+colnames(jde_bom)[51]<-"mon_i dep demand"
+colnames(jde_bom)[52]<-"mon_j dep demand"
+colnames(jde_bom)[53]<-"mon_k dep demand"
+colnames(jde_bom)[54]<-"mon_l dep demand"
 
 writexl::write_xlsx(jde_bom, "Bill of Material_052423.xlsx")
