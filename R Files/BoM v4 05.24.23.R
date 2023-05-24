@@ -774,9 +774,51 @@ jde_bom %>%
 ######################################################################################################################
 
 
+# Net Wt code update
+pre_bom <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/5.17.2023/Bill of Material_051723.xlsx")
+
+pre_bom %>% 
+  data.frame() %>% 
+  dplyr::select(Parent.Item.Number, Net_wt) %>% 
+  dplyr::rename(Parent_Item_Number = Parent.Item.Number,
+                Net_wt_2 = Net_wt) -> pre_bom
+
+pre_bom[!duplicated(pre_bom[,c("Parent_Item_Number")]),] -> pre_bom
+
+jde_bom %>% 
+  dplyr::left_join(pre_bom) %>% 
+  dplyr::mutate(Net_wt = ifelse(is.na(Net_wt), Net_wt_2, Net_wt)) %>% 
+  dplyr::select(-Net_wt_2) -> jde_bom
+
+
+
 # Things to do
-# - Let's try Net_wt with mstr data... inventory modeling doesn't bring all
+
 # - Supplier
+Campus_ref %>% 
+  dplyr::select(Loc, Campus) %>% 
+  dplyr::rename(campus = Campus) -> campus_ref
+
+exception_report %>% 
+  dplyr::mutate(Loc = as.double(Loc)) %>% 
+  left_join(campus_ref) %>% 
+  dplyr::mutate(campus_ref = paste0(campus, "_", Item)) -> exception_report_2
+  
+
+exception_report_2 %>% 
+  dplyr::select(Loc, campus_ref, Supplier) %>% 
+  dplyr::arrange(desc(Loc)) %>% 
+  dplyr::mutate(loc_supplier = paste0(Loc, "_", Supplier)) -> exception_report_2
+
+exception_report_2[!duplicated(exception_report_2[,c("loc_supplier")]),] -> exception_report_2
+
+exception_report_2 %>% 
+  dplyr::select(campus_ref, Supplier) %>% 
+  dplyr::rename(comp_ref = campus_ref) -> exception_report_2
+  
+
+jde_bom %>% 
+  dplyr::left_join(exception_report_2) -> tt
 
 
 
