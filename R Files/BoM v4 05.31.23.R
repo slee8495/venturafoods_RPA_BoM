@@ -770,7 +770,7 @@ jde_bom %>%
 
 
 ######################################################################################################################
-##################################################### Data Fix #######################################################
+##################################################### update 5/24/23 #################################################
 ######################################################################################################################
 
 
@@ -781,18 +781,16 @@ pre_bom %>%
   data.frame() %>% 
   dplyr::select(Parent.Item.Number, Net_wt) %>% 
   dplyr::rename(Parent_Item_Number = Parent.Item.Number,
-                Net_wt_2 = Net_wt) -> pre_bom
+                Net_wt_2 = Net_wt) -> pre_bom_net_wt
 
-pre_bom[!duplicated(pre_bom[,c("Parent_Item_Number")]),] -> pre_bom
+pre_bom_net_wt[!duplicated(pre_bom_net_wt[,c("Parent_Item_Number")]),] -> pre_bom_net_wt
 
 jde_bom %>% 
-  dplyr::left_join(pre_bom) %>% 
+  dplyr::left_join(pre_bom_net_wt) %>% 
   dplyr::mutate(Net_wt = ifelse(is.na(Net_wt), Net_wt_2, Net_wt)) %>% 
   dplyr::select(-Net_wt_2) -> jde_bom
 
 
-
-# Things to do
 
 # - Supplier
 exception_report %>% 
@@ -807,6 +805,29 @@ exception_report %>%
 jde_bom %>% 
   dplyr::left_join(exception_report_2) %>% 
   dplyr::mutate(Supplier = ifelse(is.na(Supplier), "NA", Supplier)) -> jde_bom
+
+
+
+
+######################################################################################################################
+##################################################### update 5/31/23 #################################################
+######################################################################################################################
+
+
+pre_bom %>% 
+  data.frame() %>% 
+  dplyr::select(Parent.Item.Number, Category, Platform) %>% 
+  dplyr::rename(Parent_Item_Number = Parent.Item.Number,
+                category = Category,
+                platform = Platform) -> pre_bom_category_platform
+
+pre_bom_category_platform[!duplicated(pre_bom_category_platform[,c("Parent_Item_Number")]),] -> pre_bom_category_platform
+
+jde_bom %>% 
+  dplyr::left_join(pre_bom_category_platform) %>% 
+  dplyr::mutate(Category = ifelse(is.na(Category), category, Category),
+                Platform = ifelse(is.na(Platform), platform, Platform)) %>% 
+  dplyr::select(-category, -platform) -> jde_bom
 
 
 ######################################################################################################################
