@@ -919,3 +919,10 @@ colnames(jde_bom)[53]<-"mon_k dep demand"
 colnames(jde_bom)[54]<-"mon_l dep demand"
 
 writexl::write_xlsx(jde_bom, "Bill of Material_053123.xlsx")
+
+
+
+file.rename(from="C:/Users/slee/OneDrive - Ventura Foods/Stan/R Codes/Projects/BoM/venturafoods_RPA_BoM/Bill of Material_053123.xlsx",
+            to="C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/5.31.2023/Bill of Material_053123.xlsx")
+
+
