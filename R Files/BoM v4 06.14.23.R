@@ -257,24 +257,47 @@ reshape2::dcast(Open_Cust_Ord, ref ~ next_28_days, value.var = "Qty", sum) -> Op
 
 # (Path revision needed) Read JDE BoM ----
 
-jde_bom <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/6.14.2023/jde_bom.xlsx", 
-                      col_names = FALSE)
+jde_bom_us <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/6.14.2023/jde_us.xlsx", 
+                         col_names = FALSE)
 
 
-jde_bom[-1:-2, ] -> jde_bom
-colnames(jde_bom) <- jde_bom[1, ] 
-jde_bom[-1, ] -> jde_bom
-jde_bom[ , c(-4,-16)] -> jde_bom
+jde_bom_us[-1:-2, ] -> jde_bom_us
+colnames(jde_bom_us) <- jde_bom_us[1, ] 
+jde_bom_us[-1, ] -> jde_bom_us
+jde_bom_us[ , c(-4,-16)] -> jde_bom_us
 
-names(jde_bom) <- stringr::str_replace_all(names(jde_bom), c(" " = "_"))
-type_convert(jde_bom) -> jde_bom
+names(jde_bom_us) <- stringr::str_replace_all(names(jde_bom_us), c(" " = "_"))
+type_convert(jde_bom_us) -> jde_bom_us
 
 
-jde_bom %>% 
+jde_bom_us %<>% 
   dplyr::mutate(ref = paste0(Business_Unit, "_", Parent_Item_Number),
-                comp_ref = paste0(Business_Unit, "_", Component)) -> jde_bom
+                comp_ref = paste0(Business_Unit, "_", Component))
 
-colnames(jde_bom)[13] <- "Quantity_w_Scrap"
+colnames(jde_bom_us)[13] <- "Quantity_w_Scrap"
+
+
+jde_bom_canada <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/6.14.2023/jde_canada.xlsx", 
+                             col_names = FALSE)
+
+
+jde_bom_canada[-1:-2, ] -> jde_bom_canada
+colnames(jde_bom_canada) <- jde_bom_canada[1, ] 
+jde_bom_canada[-1, ] -> jde_bom_canada
+jde_bom_canada[ , c(-4,-16)] -> jde_bom_canada
+
+names(jde_bom_canada) <- stringr::str_replace_all(names(jde_bom_canada), c(" " = "_"))
+type_convert(jde_bom_canada) -> jde_bom_canada
+
+
+jde_bom_canada %<>% 
+  dplyr::mutate(ref = paste0(Business_Unit, "_", Parent_Item_Number),
+                comp_ref = paste0(Business_Unit, "_", Component))
+
+colnames(jde_bom_canada)[13] <- "Quantity_w_Scrap"
+
+
+rbind(jde_bom_us, jde_bom_canada) -> jde_bom
 
 
 
