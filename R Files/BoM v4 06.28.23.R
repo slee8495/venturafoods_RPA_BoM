@@ -76,7 +76,7 @@ inventory_model_data %>%
                 Net_wt = as.numeric(Net_wt)) -> inventory_model
 
 # (Path revision needed) IOM MicroStrategy ----
-IOM_micro <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/6.28.2023/IOM Data Extract (17).xlsx")
+IOM_micro <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/6.28.2023/IOM Data Extract (18).xlsx")
 
 IOM_micro[-1, ] -> IOM_micro
 colnames(IOM_micro) <- IOM_micro[1, ]
