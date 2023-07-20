@@ -64,6 +64,7 @@ category_bi %>%
 inventory_model_data <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/Safety Stock Compliance/Weekly Run Files/2023/7.17.23/SS Optimization by Location - Finished Goods July 2023.xlsx",
                                    col_names = FALSE, sheet = "Fin Goods")
 
+
 inventory_model_data[-1:-7, ] -> inventory_model_data
 colnames(inventory_model_data) <- inventory_model_data[1, ]
 inventory_model_data[-1, ] -> inventory_model_data
@@ -848,6 +849,30 @@ jde_bom %>%
   dplyr::mutate(Category = ifelse(is.na(Category), category, Category),
                 Platform = ifelse(is.na(Platform), platform, Platform)) %>% 
   dplyr::select(-category, -platform) -> jde_bom
+
+
+#################################### added 7/19/23 ######################################
+jde_bom_us %>% 
+  data.frame() %>% 
+  dplyr::select(Component, Unit_Cost) %>% 
+  dplyr::arrange(Component) -> jde_bom_us_unit_cost
+
+jde_bom_canada %>% 
+  data.frame() %>% 
+  dplyr::select(Component, Unit_Cost) %>% 
+  dplyr::arrange(Component) -> jde_bom_canada_unit_cost
+
+
+rbind(jde_bom_us_unit_cost, jde_bom_canada_unit_cost) -> unit_cost
+
+
+unit_cost[!duplicated(unit_cost[,c("Component")]),] -> unit_cost
+
+jde_bom %>% 
+  dplyr::left_join(unit_cost, by = "Component") %>% 
+  dplyr::select(-Unit_Cost.x) %>% 
+  dplyr::rename(Unit_Cost = Unit_Cost.y) %>% 
+  dplyr::mutate(Unit_Cost = round(Unit_Cost, 2)) -> jde_bom
 
 
 ######################################################################################################################
