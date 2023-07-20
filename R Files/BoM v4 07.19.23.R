@@ -851,29 +851,6 @@ jde_bom %>%
   dplyr::select(-category, -platform) -> jde_bom
 
 
-#################################### added 7/19/23 ######################################
-jde_bom_us %>% 
-  data.frame() %>% 
-  dplyr::select(Component, Unit_Cost) %>% 
-  dplyr::arrange(Component) -> jde_bom_us_unit_cost
-
-jde_bom_canada %>% 
-  data.frame() %>% 
-  dplyr::select(Component, Unit_Cost) %>% 
-  dplyr::arrange(Component) -> jde_bom_canada_unit_cost
-
-
-rbind(jde_bom_us_unit_cost, jde_bom_canada_unit_cost) -> unit_cost
-
-
-unit_cost[!duplicated(unit_cost[,c("Component")]),] -> unit_cost
-
-jde_bom %>% 
-  dplyr::left_join(unit_cost, by = "Component") %>% 
-  dplyr::select(-Unit_Cost.x) %>% 
-  dplyr::rename(Unit_Cost = Unit_Cost.y) %>% 
-  dplyr::mutate(Unit_Cost = round(Unit_Cost, 2)) -> jde_bom
-
 
 ######################################################################################################################
 ##################################################### final touch ####################################################
