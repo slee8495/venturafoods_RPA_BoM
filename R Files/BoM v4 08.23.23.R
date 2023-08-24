@@ -846,6 +846,19 @@ jde_bom %>%
 
 
 ######################################################################################################################
+##################################################### update 8/24/23 #################################################
+######################################################################################################################
+
+
+
+jde_bom %>% 
+  dplyr::mutate(Component = sub("^0+", "", Component)) %>% 
+  dplyr::mutate(comp_ref = paste0(Business_Unit, "_", Component)) -> jde_bom
+  
+
+
+
+######################################################################################################################
 ##################################################### final touch ####################################################
 ######################################################################################################################
 
@@ -934,11 +947,11 @@ colnames(jde_bom)[53]<-"mon_j dep demand"
 colnames(jde_bom)[54]<-"mon_k dep demand"
 colnames(jde_bom)[55]<-"mon_l dep demand"
 
-writexl::write_xlsx(jde_bom, "Bill of Material_082323.xlsx")
+writexl::write_xlsx(jde_bom, "Bill of Material_082323_2.xlsx")
 
 
 
-file.rename(from="C:/Users/slee/OneDrive - Ventura Foods/Stan/R Codes/Projects/BoM/venturafoods_RPA_BoM/Bill of Material_082323.xlsx",
-            to="C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/8.23.2023/Bill of Material_082323.xlsx")
+file.rename(from="C:/Users/slee/OneDrive - Ventura Foods/Stan/R Codes/Projects/BoM/venturafoods_RPA_BoM/Bill of Material_082323_2.xlsx",
+            to="C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/8.23.2023/Bill of Material_082323_2.xlsx")
 
 
