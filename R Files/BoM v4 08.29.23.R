@@ -951,7 +951,7 @@ writexl::write_xlsx(jde_bom, "Bill of Material_082923.xlsx")
 
 
 
-file.rename(from="C:/Users/slee/OneDrive - Ventura Foods/Stan/R Codes/Projects/BoM/venturafoods_RPA_BoM/Bill of Material_082923_2.xlsx",
+file.rename(from="C:/Users/slee/OneDrive - Ventura Foods/Stan/R Codes/Projects/BoM/venturafoods_RPA_BoM/Bill of Material_082923.xlsx",
             to="C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/8.29.2023/Bill of Material_082923.xlsx")
 
 
