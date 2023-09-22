@@ -189,12 +189,13 @@ DSX_pivot_1 %>%
 
 
 # (Path revision needed) Opencustord ----
+Open_Cust_Ord <- read.csv("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/DSXIE/2023/9.22/open_cust_ord.csv", header = FALSE)
 
-Open_Cust_Ord <- read.csv("Z:/IMPORT_CUSTORDS.csv",
-                          header = FALSE)
 
 Open_Cust_Ord %>% 
-  dplyr::rename(aa = V1) %>% 
+  dplyr::select(-1) %>% 
+  dplyr::slice(-1) %>% 
+  dplyr::rename(aa = V2) %>% 
   tidyr::separate(aa, c("1", "2", "3", "4", "5", "6", "7", "8", "9"), sep = "~") %>% 
   dplyr::select(-"3", -"4", -"6", -"7", -"8") %>% 
   dplyr::rename(aa = "1") %>% 
