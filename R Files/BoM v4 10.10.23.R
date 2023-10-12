@@ -216,6 +216,59 @@ Open_Cust_Ord %>%
   dplyr::mutate(date = as.Date(date)) -> Open_Cust_Ord
 
 
+###################################### Location 39 custord  ######################################
+# https://edgeanalytics.venturafoods.com/MicroStrategyLibrary/app/DF007F1C11E9B3099BB30080EF7513D2/0C5A36EF284A6B95495A2CA203913E1A/W71--K46
+loc_39_bt <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/IQR Automation/FG/weekly run data/10.11.2023/BT open order and qty.xlsx")
+
+loc_39_bt[-1, ] -> loc_39_bt
+colnames(loc_39_bt) <- loc_39_bt[1, ]
+loc_39_bt[-1, ] -> loc_39_bt
+
+loc_39_bt %>% 
+  janitor::clean_names() %>% 
+  dplyr::rename(Loc = location,
+                ProductSkuCode = product_label_sku,
+                Qty = b_t_open_order_cases,
+                date = sales_order_requested_ship_date) %>% 
+  dplyr::select(Loc, ProductSkuCode, Qty, date) %>% 
+  readr::type_convert() %>% 
+  dplyr::mutate(ProductSkuCode = gsub("-", "", ProductSkuCode),
+                ref = paste0(Loc, "_", ProductSkuCode)) %>% 
+  dplyr::mutate(date = as.Date(date, origin = "1899-12-30"),
+                year = year(date),
+                month = month(date),
+                day = day(date),
+                month_year = paste0(month, "_", year),
+                year = as.character(year),
+                month = as.character(month),
+                day = as.character(day)) %>% 
+  dplyr::filter(Loc == 39) %>% 
+  
+  dplyr::group_by(ref) %>% 
+  dplyr::summarise(Qty = sum(Qty),
+                   Loc = first(Loc),
+                   ProductSkuCode = first(ProductSkuCode),
+                   date = first(date),
+                   year = first(year),
+                   month = first(month),
+                   month_year = first(month_year),
+                   day = first(day)) %>% 
+  dplyr::relocate(ref, ProductSkuCode, Loc, Qty, date, year, month, day, month_year) %>% 
+  dplyr::mutate(Loc = as.character(Loc)) -> loc_39_bt_2
+
+
+rbind(Open_Cust_Ord, loc_39_bt_2) %>% 
+  dplyr::group_by(ref) %>% 
+  dplyr::summarise(ref = first(ref),
+                   ProductSkuCode = first(ProductSkuCode),
+                   Loc = first(Loc),
+                   Qty = sum(Qty),
+                   date = first(date),
+                   year = first(year),
+                   month = first(month),
+                   day = first(day),
+                   month_year = first(month_year)) -> Open_Cust_Ord
+
 
 # (Path revision needed) Sales and Open orders cube from Micro (Canada only) ----
 
