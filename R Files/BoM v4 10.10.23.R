@@ -205,6 +205,7 @@ Open_Cust_Ord %>%
                 Qty = "5",
                 date = "9") %>% 
   dplyr::mutate(Loc = sub("^0+", "", Loc)) %>% 
+  dplyr::mutate(Loc = as.numeric(str_replace_all(Loc, "[A-Za-z]", ""))) %>% 
   dplyr::mutate(ref = paste0(Loc, "_", ProductSkuCode)) %>% 
   dplyr::mutate(year = lubridate::year(date), year = as.character(year),
                 month = lubridate::month(date), month = as.character(month),
