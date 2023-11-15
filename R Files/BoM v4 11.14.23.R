@@ -472,58 +472,17 @@ rbind(FG, RM) -> inventory_micro
 inventory_micro %>% 
   dplyr::mutate(inventory_qty_cases = replace(inventory_qty_cases, is.na(inventory_qty_cases), 0)) -> inventory_micro
 
-# Insert Mfg_Loc 
-iqr_fg <- readxl::read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/IQR Automation/FG/weekly run data/11.07.2023/Finished Goods Inventory Health Adjusted Forward (IQR) NEW TEMPLATE - 11.07.23.xlsx",
-                             sheet = "Location FG")
-
-iqr_rm <- readxl::read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/IQR Automation/RM/weekly Report run/11.07.23/Raw Material Inventory Health (IQR) NEW TEMPLATE - 11.07.23.xlsx",
-                             sheet = "RM data")
-
-
-iqr_fg %>% 
-  data.frame() %>% 
-  dplyr::slice(-1:-2) -> iqr_fg_mfg_site
-
-colnames(iqr_fg_mfg_site) <- iqr_fg_mfg_site[1, ]
-
-iqr_fg_mfg_site %>% 
-  dplyr::slice(-1) %>% 
-  janitor::clean_names() %>% 
-  dplyr::select(ref, campus_ref) %>% 
-  dplyr::mutate(ref = gsub("-", "_", ref),
-                campus_ref = gsub("-", "_", campus_ref))-> iqr_fg_mfg_site
 
 
 
-
-iqr_rm %>% 
-  data.frame() %>% 
-  dplyr::slice(-1:-2) -> iqr_rm_mfg_site
-
-colnames(iqr_rm_mfg_site) <- iqr_rm_mfg_site[1, ]
-
-iqr_rm_mfg_site %>% 
-  dplyr::slice(-1) %>% 
-  janitor::clean_names() %>% 
-  dplyr::select(loc_sku) %>% 
-  dplyr::mutate(loc_sku = gsub("-", "_", loc_sku)) %>% 
-  dplyr::mutate(ref = loc_sku) -> iqr_rm_mfg_site
-
-
-
-
-# insert campus_ref
-
+# campus ref
 inventory_micro %>% 
-  dplyr::left_join(iqr_fg_mfg_site) %>% 
-  dplyr::left_join(iqr_rm_mfg_site)  %>% 
-  dplyr::mutate(campus_ref = ifelse(is.na(campus_ref), loc_sku, campus_ref)) %>% 
-  dplyr::select(-loc_sku) %>% 
+  dplyr::mutate(location = as.double(location)) %>% 
+  dplyr::left_join(Campus_ref %>% rename(location = Loc) %>% select(Campus, location)) %>% 
+  dplyr::mutate(campus_ref = paste0(location, "_", item)) %>% 
   dplyr::rename(Hold_Status = inventory_hold_status,
-                Current_Inventory_Balance = inventory_qty_cases) -> inventory_micro
-
-
-
+                Current_Inventory_Balance = inventory_qty_cases) %>% 
+  dplyr::select(-Campus) -> inventory_micro
 
 
 
