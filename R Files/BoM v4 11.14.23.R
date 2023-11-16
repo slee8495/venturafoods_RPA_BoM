@@ -427,30 +427,40 @@ parent_count_2[-which(duplicated(parent_count_2$Component)),] -> parent_count_2
 
 # (Path revision needed) Inventory from MicroStrategy (FG) ----
 
-FG <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/Safety Stock Compliance/Weekly Run Files/2023/11.14.23/FG.xlsx", 
+FG <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/Safety Stock Compliance/Weekly Run Files/2023/11.14.23/FG_2.xlsx", 
                  col_names = FALSE)
 
 
-FG[-1:-2, ] -> FG
 colnames(FG) <- FG[1, ]
 FG[-1, ] -> FG
 
 FG %>% 
   janitor::clean_names() %>% 
   data.frame() %>% 
-  dplyr::select(location, product_label_sku, inventory_hold_status, inventory_qty_cases) %>% 
-  dplyr::mutate(product_label_sku = gsub("-", "", product_label_sku)) %>% 
-  dplyr::mutate(ref = paste0(location, "_", product_label_sku)) %>% 
-  dplyr::rename(item = product_label_sku)-> FG
+  readr::type_convert() %>% 
+  dplyr::left_join(Campus_ref %>% rename(location = Loc) %>% select(location, Campus)) %>% 
+  dplyr::mutate(current_inventory_balance = ifelse(is.na(current_inventory_balance), 0, current_inventory_balance)) %>% 
+  dplyr::mutate(product_label_sku = gsub("-", "", product_label_sku),
+                ref = paste0(location, "_", product_label_sku),
+                campus_ref = paste0(Campus, "_", product_label_sku)) %>% 
+  dplyr::rename(Location = location,
+                Location_Name = na,
+                Mfg_Location_campus = Campus,
+                Item = product_label_sku,
+                Description = na_2,
+                Inventory_Status_Code = inventory_status_code,
+                Hold_Status = inventory_hold_status,
+                Current_Inventory_Balance = current_inventory_balance) %>% 
+  dplyr::relocate(ref, campus_ref, Location, Location_Name, Mfg_Location_campus, Item, Description, Inventory_Status_Code,
+                  Hold_Status, Current_Inventory_Balance) -> FG
 
 
 # (Path revision needed) Inventory from MicroStrategy (RM) ----
 
-RM <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/Safety Stock Compliance/Weekly Run Files/2023/11.14.23/RM.xlsx", 
+RM <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/Safety Stock Compliance/Weekly Run Files/2023/11.14.23/RM_2.xlsx", 
                  col_names = FALSE)
 
 
-RM[-1:-2, ] -> RM
 colnames(RM) <- RM[1, ]
 RM[-1, ] -> RM
 
@@ -459,9 +469,22 @@ RM[-1, ] -> RM
 RM %>% 
   janitor::clean_names() %>% 
   data.frame() %>% 
-  dplyr::select(location, item, inventory_hold_status, inventory_qty_cases) %>% 
-  dplyr::mutate(ref = paste0(location, "_", item)) %>% 
-  dplyr::mutate(item = sub("^0+", "", item)) -> RM
+  readr::type_convert() %>% 
+  dplyr::left_join(Campus_ref %>% rename(location = Loc) %>% select(location, Campus)) %>% 
+  dplyr::mutate(current_inventory_balance = ifelse(is.na(current_inventory_balance), 0, current_inventory_balance)) %>% 
+  dplyr::mutate(ref = paste0(location, "_", item),
+                campus_ref = paste0(Campus, "_", item)) %>% 
+  dplyr::rename(Location = location,
+                Location_Name = na,
+                Mfg_Location_campus = Campus,
+                Item = item,
+                Description = na_2,
+                Inventory_Status_Code = inventory_status_code,
+                Hold_Status = inventory_hold_status,
+                Current_Inventory_Balance = current_inventory_balance) %>% 
+  dplyr::mutate(Item = sub("^0+", "", Item)) %>% 
+  dplyr::relocate(ref, campus_ref, Location, Location_Name, Mfg_Location_campus, Item, Description, Inventory_Status_Code,
+                    Hold_Status, Current_Inventory_Balance) -> RM
 
 
 # combine FG, RM
@@ -469,20 +492,6 @@ RM %>%
 rbind(FG, RM) -> inventory_micro
 
 
-inventory_micro %>% 
-  dplyr::mutate(inventory_qty_cases = replace(inventory_qty_cases, is.na(inventory_qty_cases), 0)) -> inventory_micro
-
-
-
-
-# campus ref
-inventory_micro %>% 
-  dplyr::mutate(location = as.double(location)) %>% 
-  dplyr::left_join(Campus_ref %>% rename(location = Loc) %>% select(Campus, location)) %>% 
-  dplyr::mutate(campus_ref = paste0(location, "_", item)) %>% 
-  dplyr::rename(Hold_Status = inventory_hold_status,
-                Current_Inventory_Balance = inventory_qty_cases) %>% 
-  dplyr::select(-Campus) -> inventory_micro
 
 
 
