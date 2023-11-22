@@ -33,7 +33,7 @@ FG_ref_to_mfg_ref %<>%
 
 # Campus_ref pulling 
 
-Campus_ref <- read_excel("S:/Supply Chain Projects/Linda Liang/reference files/campus reference.xlsx", 
+Campus_ref <- read_excel("S:/Supply Chain Projects/Linda Liang/reference files/Campus reference.xlsx", 
                          col_types = c("numeric", "text", "text", 
                                        "numeric"))
 
@@ -80,7 +80,7 @@ inventory_model_data %>%
                 Net_wt = as.numeric(Net_wt)) -> inventory_model
 
 # (Path revision needed) IOM MicroStrategy ----
-IOM_micro <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/11.14.2023/IOM Data Extract.xlsx")
+IOM_micro <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/11.21.2023/IOM Data Extract.xlsx")
 
 IOM_micro[-1, ] -> IOM_micro
 colnames(IOM_micro) <- IOM_micro[1, ]
@@ -99,7 +99,7 @@ IOM_micro %>%
 # (Path revision needed) DSX Forecast backup ----
 
 DSX_Forecast_Backup <- read_excel(
-  "S:/Global Shared Folders/Large Documents/S&OP/Demand Planning/Demand Planning Team/BI Forecast Backup/2023/DSX Forecast Backup - 2023.11.14.xlsx")
+  "S:/Global Shared Folders/Large Documents/S&OP/Demand Planning/Demand Planning Team/BI Forecast Backup/2023/DSX Forecast Backup - 2023.11.20.xlsx")
 
 DSX_Forecast_Backup[-1,] -> DSX_Forecast_Backup
 colnames(DSX_Forecast_Backup) <- DSX_Forecast_Backup[1, ]
@@ -190,7 +190,7 @@ DSX_pivot_1 %>%
 
 
 # (Path revision needed) Opencustord ----
-Open_Cust_Ord <- read.csv("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/DSXIE/2023/11.14/open_cust_ord.csv", header = FALSE)
+Open_Cust_Ord <- read.csv("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/DSXIE/2023/11.21/open_cust_ord.csv", header = FALSE)
 
 
 Open_Cust_Ord %>% 
@@ -220,7 +220,7 @@ Open_Cust_Ord %>%
 
 ###################################### Location 39 custord  ######################################
 # https://edgeanalytics.venturafoods.com/MicroStrategyLibrary/app/DF007F1C11E9B3099BB30080EF7513D2/0C5A36EF284A6B95495A2CA203913E1A/W71--K46
-loc_39_bt <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/Safety Stock Compliance/Weekly Run Files/2023/11.14.23/BT open order and qty.xlsx")
+loc_39_bt <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/Safety Stock Compliance/Weekly Run Files/2023/11.21.23/BT open order and qty.xlsx")
 
 loc_39_bt[-1, ] -> loc_39_bt
 colnames(loc_39_bt) <- loc_39_bt[1, ]
@@ -274,7 +274,7 @@ rbind(Open_Cust_Ord, loc_39_bt_2) %>%
 
 # (Path revision needed) Sales and Open orders cube from Micro (Canada only) ----
 
-canada_micro <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/11.14.2023/Canada Open Orders.xlsx", 
+canada_micro <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/11.21.2023/Canada Open Orders.xlsx", 
                            col_names = FALSE)
 
 
@@ -316,7 +316,7 @@ reshape2::dcast(Open_Cust_Ord, ref ~ next_28_days, value.var = "Qty", sum) -> Op
 
 # (Path revision needed) Read JDE BoM ----
 
-jde_bom_us <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/11.14.2023/jde_us.xlsx", 
+jde_bom_us <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/11.21.2023/jde_us.xlsx", 
                          col_names = FALSE)
 
 
@@ -336,7 +336,7 @@ jde_bom_us %<>%
 colnames(jde_bom_us)[13] <- "Quantity_w_Scrap"
 
 
-jde_bom_canada <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/11.14.2023/jde_canada.xlsx", 
+jde_bom_canada <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/11.21.2023/jde_canada.xlsx", 
                              col_names = FALSE)
 
 
@@ -382,10 +382,56 @@ jde_bom %>%
 parent_count_2[-which(duplicated(parent_count_2$Component)),] -> parent_count_2
 
 
-################################################################### use below for 86, 226 ############################################################
+# ################################################################### use below for 86, 226 ############################################################
+
+
+
+# Inventory Status Code table
+Inventory_Status_Code <- c("", "Q", "W")
+Hold_Status <- c("Useable", "Hard Hold", "Soft Hold")
+
+data.frame(Inventory_Status_Code, Hold_Status) -> inventory_status_table
+
+# Inv Bal
+
+inv_bal <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/Safety Stock Compliance/Weekly Run Files/2023/11.21.23/inv_bal.xlsx")
+inv_bal %>% 
+  janitor::clean_names() %>% 
+  dplyr::slice(-1:-2) -> inv_bal
+
+colnames(inv_bal) <- inv_bal[1, ]
+
+inv_bal %>% 
+  janitor::clean_names() %>% 
+  dplyr::slice(-1) %>% 
+  dplyr::mutate(bp = as.double(bp)) %>% 
+  dplyr::filter(bp != 86 & bp != 226) %>% 
+  dplyr::select(bp, item, description, usable, soft_hold, hard_hold) %>% 
+  dplyr::rename(Loc = bp) %>% 
+  dplyr::left_join(Campus_ref %>% select(Loc, Campus)) %>% 
+  dplyr::mutate(ref = paste0(Loc, "_", item),
+                campus_ref = paste0(Campus, "_", item)) %>% 
+  dplyr::rename(Location = Loc,
+                Mfg_Location_campus = Campus,
+                Item = item,
+                Description = description,
+                Useable = usable,
+                "Soft Hold" = soft_hold,
+                "Hard Hold" = hard_hold) %>% 
+  tidyr::pivot_longer(cols = c("Useable", "Soft Hold", "Hard Hold"),
+                      names_to = "Hold_Status",
+                      values_to = "Current_Inventory_Balance") %>% 
+  dplyr::mutate(Current_Inventory_Balance = ifelse(is.na(Current_Inventory_Balance), 0, Current_Inventory_Balance)) %>% 
+  dplyr::left_join(inventory_status_table) %>% 
+  readr::type_convert() %>% 
+  dplyr::mutate(Current_Inventory_Balance  = ifelse(Current_Inventory_Balance < 0, 0, Current_Inventory_Balance)) -> inventory_micro
+  
+##
+
+
 # (Path revision needed) Inventory from MicroStrategy (FG) ----
 
-FG <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/Safety Stock Compliance/Weekly Run Files/2023/11.14.23/Inventory Report for all locations (FG).xlsx", 
+FG <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/Safety Stock Compliance/Weekly Run Files/2023/11.21.23/Inventory Report for all locations (FG).xlsx",
                  col_names = FALSE)
 
 
@@ -402,11 +448,13 @@ colnames(FG)[6] <- "Inventory_Status_Code"
 colnames(FG)[7] <- "Hold_Status"
 colnames(FG)[8] <- "Current_Inventory_Balance"
 
+FG %>% 
+  dplyr::filter(Location == 86 | Location == 226) -> FG
 
 
 # (Path revision needed) Inventory from MicroStrategy (RM) ----
 
-RM <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/Safety Stock Compliance/Weekly Run Files/2023/11.14.23/Inventory Report for all locations (RM).xlsx", 
+RM <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/Safety Stock Compliance/Weekly Run Files/2023/11.21.23/Inventory Report for all locations (RM).xlsx",
                  col_names = FALSE)
 
 
@@ -423,28 +471,36 @@ colnames(RM)[6] <- "Inventory_Status_Code"
 colnames(RM)[7] <- "Hold_Status"
 colnames(RM)[8] <- "Current_Inventory_Balance"
 
-RM %>% 
+RM %>%
   dplyr::mutate(Item = sub("^0+", "", Item)) -> RM
+
+RM %>% 
+  dplyr::filter(Location == 86 | Location == 226) -> RM
 
 
 # combine FG, RM
 
-rbind(FG, RM) -> inventory_micro
+rbind(FG, RM) -> inventory_for_all_locations
 
 
-inventory_micro %>% 
-  dplyr::mutate(Item = gsub("-", "", Item),  
+inventory_for_all_locations %>%
+  dplyr::mutate(Item = gsub("-", "", Item),
                 ref = paste0(Location, "_", Item),
-                campus_ref = paste0(Mfg_Location_campus, "_", Item)) %>% 
-  dplyr::relocate(ref, campus_ref) -> inventory_micro
+                campus_ref = paste0(Mfg_Location_campus, "_", Item)) %>%
+  dplyr::relocate(ref, campus_ref) -> inventory_for_all_locations
 
 
-readr::type_convert(inventory_micro) -> inventory_micro
+readr::type_convert(inventory_for_all_locations) -> inventory_for_all_locations
 
-inventory_micro %>% 
-  dplyr::mutate(Current_Inventory_Balance = replace(Current_Inventory_Balance, is.na(Current_Inventory_Balance), 0)) -> inventory_micro
+inventory_for_all_locations %>%
+  dplyr::mutate(Current_Inventory_Balance = replace(Current_Inventory_Balance, is.na(Current_Inventory_Balance), 0)) -> inventory_for_all_locations
 
-# inventory_micro_pivot
+inventory_for_all_locations %>% 
+  dplyr::select(-Location_Name) -> inventory_for_all_locations
+
+## combine
+rbind(inventory_micro, inventory_for_all_locations) -> inventory_micro
+
 
 reshape2::dcast(inventory_micro, campus_ref ~ Hold_Status , value.var = "Current_Inventory_Balance", sum) %>% 
   dplyr::rename(ref = campus_ref) %>% 
@@ -647,7 +703,7 @@ merge(jde_bom, weeks_on_hand[, c("comp_ref", "weeks_on_hand")], by = "comp_ref",
 
 # Adding SKU Status (from exception report) ----
 
-exception_report <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/Safety Stock Compliance/Weekly Run Files/2023/11.14.23/exception report.xlsx")
+exception_report <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/Safety Stock Compliance/Weekly Run Files/2023/11.21.23/exception report.xlsx")
 
 exception_report[-1:-2, ] -> exception_report
 colnames(exception_report) <- exception_report[1, ]
@@ -741,7 +797,7 @@ jde_bom %>%
 
 
 # Category & Platform
-completed_sku_list <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/Safety Stock Compliance/Weekly Run Files/2023/11.14.23/Completed SKU list - Linda.xlsx")
+completed_sku_list <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/Safety Stock Compliance/Weekly Run Files/2023/11.21.23/Completed SKU list - Linda.xlsx")
 completed_sku_list[-1:-2, ]  %>% 
   janitor::clean_names() %>% 
   dplyr::select(x6, x9, x11) %>% 
@@ -788,7 +844,7 @@ jde_bom %>%
 
 
 # Net Wt code update
-pre_bom <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/11.07.2023/Bill of Material_110723.xlsx")
+pre_bom <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/11.14.2023/Bill of Material_111423.xlsx")
 
 pre_bom %>% 
   data.frame() %>% 
@@ -960,7 +1016,7 @@ colnames(jde_bom)[53]<-"mon_j dep demand"
 colnames(jde_bom)[54]<-"mon_k dep demand"
 colnames(jde_bom)[55]<-"mon_l dep demand"
 
-writexl::write_xlsx(jde_bom, "C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/11.14.2023/Bill of Material_111423.xlsx")
+writexl::write_xlsx(jde_bom, "C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/11.21.2023/Bill of Material_112123.xlsx")
 
 
 
