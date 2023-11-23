@@ -714,6 +714,8 @@ names(exception_report) <- str_replace_all(names(exception_report), c(" " = "_")
 colnames(exception_report)[1] <- "Loc"
 colnames(exception_report)[2] <- "Item"
 
+exception_report[!duplicated(exception_report[,c("ref")]),] -> exception_report
+
 # ref
 exception_report %>% 
   dplyr::mutate(ref = paste0(Loc, "_", Item)) %>% 
