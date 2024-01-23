@@ -363,23 +363,14 @@ rbind(jde_bom_us, jde_bom_canada) -> jde_bom
 
 # parent count
 jde_bom %>% 
-  dplyr::group_by(comp_ref, Parent_Item_Number) %>% 
-  dplyr::summarize(count = n()) %>% 
-  dplyr::mutate(parent_count_1 = table(comp_ref)) %>% 
-  dplyr::mutate(parent_count_1 = as.integer(parent_count_1)) %>% 
-  dplyr::select(-count, -Parent_Item_Number) -> parent_count_1
-
-parent_count_1[-which(duplicated(parent_count_1$comp_ref)),] -> parent_count_1
-
+  dplyr::count(comp_ref, Parent_Item_Number) %>% 
+  dplyr::group_by(comp_ref) %>%
+  dplyr::summarize(parent_count_1 = n_distinct(Parent_Item_Number)) -> parent_count_1
 
 jde_bom %>% 
-  dplyr::group_by(Component, Parent_Item_Number) %>% 
-  dplyr::summarize(count = n()) %>% 
-  dplyr::mutate(parent_count_2 = table(Component)) %>% 
-  dplyr::mutate(parent_count_2 = as.integer(parent_count_2)) %>% 
-  dplyr::select(-count, -Parent_Item_Number) -> parent_count_2
-
-parent_count_2[-which(duplicated(parent_count_2$Component)),] -> parent_count_2
+  dplyr::count(Component, Parent_Item_Number) %>% 
+  dplyr::group_by(Component) %>%
+  dplyr::summarize(parent_count_2 = n_distinct(Parent_Item_Number)) -> parent_count_2
 
 
 # ################################################################### use below for 86, 226 ############################################################
