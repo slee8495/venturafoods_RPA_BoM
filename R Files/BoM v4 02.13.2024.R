@@ -9,6 +9,8 @@ library(magrittr)
 library(skimr)
 library(rio)
 
+specific_date <- as.Date("2024-02-13")
+
 ##################################################################################################################################################################
 ##################################################################################################################################################################
 ##################################################################################################################################################################
@@ -308,7 +310,7 @@ canada_micro %>%
 rbind(Open_Cust_Ord, canada_micro) -> Open_Cust_Ord
 
 merge(Open_Cust_Ord, FG_ref_to_mfg_ref[, c("ref", "mfg_ref")], by = "ref", all.x = TRUE) %>% 
-  dplyr::mutate(next_28_days = ifelse(date <= Sys.Date() + 28, "Y", "N")) -> Open_Cust_Ord
+  dplyr::mutate(next_28_days = ifelse(date <= specific_date + 28, "Y", "N")) -> Open_Cust_Ord
 
 reshape2::dcast(Open_Cust_Ord, ref ~ next_28_days, value.var = "Qty", sum) -> Open_Cust_Ord_Pivot
 
