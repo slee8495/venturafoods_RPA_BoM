@@ -404,6 +404,12 @@ inventory_micro %>%
                 Current_Inventory_Balance = current_inventory_balance) %>% 
   dplyr::mutate(Current_Inventory_Balance = as.numeric(Current_Inventory_Balance)) -> inventory_micro
 
+inventory_micro %>% 
+  filter(!str_starts(Description, "PWS ") & 
+           !str_starts(Description, "SUB ") & 
+           !str_starts(Description, "THW ") & 
+           !str_starts(Description, "PALEET")) -> inventory_micro
+
 
 reshape2::dcast(inventory_micro, campus_ref ~ Hold_Status , value.var = "Current_Inventory_Balance", sum) %>%
   dplyr::rename(ref = campus_ref) %>%
