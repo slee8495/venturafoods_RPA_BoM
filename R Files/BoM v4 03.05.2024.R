@@ -95,6 +95,21 @@ IOM_micro %>%
                 Parent_Item_Number = gsub("-", "", Parent_Item_Number)) -> IOM_micro
 
 
+# Exception Report ----
+
+exception_report <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/Safety Stock Compliance/Weekly Run Files/2024/03.05.2024/exception report.xlsx")
+
+exception_report[-1:-2, ] -> exception_report
+colnames(exception_report) <- exception_report[1, ]
+exception_report[-1, -32] -> exception_report
+
+names(exception_report) <- str_replace_all(names(exception_report), c(" " = "_"))
+
+colnames(exception_report)[1] <- "Loc"
+colnames(exception_report)[2] <- "Item"
+
+
+
 
 
 # (Path revision needed) DSX Forecast backup ----
@@ -394,6 +409,8 @@ inventory_micro[-1, ] -> inventory_micro
 inventory_micro %>% 
   janitor::clean_names() %>% 
   dplyr::select(location,item, description, campus_no, inventory_hold_status, current_inventory_balance) %>% 
+  dplyr::mutate(item = gsub("-", "", item),
+                item = as.double(item)) %>% 
   dplyr::mutate(ref = paste0(location, "_", item),
                 campus_ref = paste0(campus_no, "_", item)) %>% 
   dplyr::rename(Location = location,
@@ -417,8 +434,54 @@ reshape2::dcast(inventory_micro, campus_ref ~ Hold_Status , value.var = "Current
 
 inventory_micro_pivot %>%
   dplyr::rename(Soft_Hold = "Soft Hold",
+                Hard_Hold = "Hard Hold",
                 Useable_temp = Useable) %>%
   dplyr::mutate(Useable = Soft_Hold + Useable_temp) -> inventory_micro_pivot
+
+
+
+################# inv_bal for 25, 55 label ###############
+
+exception_report %>% 
+  dplyr::select(Item, MPF_or_Line) %>% 
+  dplyr::rename(item = Item,
+                label = MPF_or_Line) %>% 
+  dplyr::mutate(item = as.double(item)) %>% 
+  dplyr::filter(label == "LBL") %>% 
+  dplyr::distinct(item, label) -> label_25_55
+
+
+inv_bal <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/Safety Stock Compliance/Weekly Run Files/2024/03.05.2024/inv_bal.xlsx")
+inv_bal[-1:-2, ] -> inv_bal
+colnames(inv_bal) <- inv_bal[1, ]
+inv_bal[-1, ] -> inv_bal
+
+
+inv_bal %>% 
+  janitor::clean_names() %>% 
+  readr::type_convert() %>% 
+  dplyr::select(bp, item, usable, soft_hold, hard_hold, inventory) %>% 
+  dplyr::rename(location = bp) %>% 
+  dplyr::mutate(location = as.double(location)) %>% 
+  dplyr::filter(location %in% c(25, 55)) %>% 
+  dplyr::mutate(item = as.double(item)) %>% 
+  dplyr::filter(!is.na(item)) %>% 
+  replace_na(list(usable = 0, soft_hold = 0, hard_hold = 0, inventory = 0)) %>% 
+  dplyr::left_join(label_25_55, by = "item") %>% 
+  dplyr::filter(!is.na(label)) %>% 
+  dplyr::select(-label) %>% 
+  dplyr::mutate(ref = paste0(location, "_", item),
+                comp_ref = paste0(location, "_", item)) %>% 
+  dplyr::mutate(usable_temp = usable,
+                usable = usable_temp + soft_hold) %>% 
+  dplyr::select(ref, hard_hold, soft_hold, usable_temp, comp_ref, usable) %>% 
+  dplyr::rename(Hard_Hold = hard_hold,
+                Soft_Hold = soft_hold,
+                Useable_temp = usable_temp,
+                Useable = usable) -> label_25_55_pivot
+
+
+rbind(inventory_micro_pivot, label_25_55_pivot) -> inventory_micro_pivot
 
 
 
@@ -610,19 +673,6 @@ merge(jde_bom, weeks_on_hand[, c("comp_ref", "weeks_on_hand")], by = "comp_ref",
 ######################################################################################################################
 ############################################## Adding new step 7/26/22 ###############################################
 ######################################################################################################################
-
-# Adding SKU Status (from exception report) ----
-
-exception_report <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/Safety Stock Compliance/Weekly Run Files/2024/03.05.2024/exception report.xlsx")
-
-exception_report[-1:-2, ] -> exception_report
-colnames(exception_report) <- exception_report[1, ]
-exception_report[-1, -32] -> exception_report
-
-names(exception_report) <- str_replace_all(names(exception_report), c(" " = "_"))
-
-colnames(exception_report)[1] <- "Loc"
-colnames(exception_report)[2] <- "Item"
 
 
 
