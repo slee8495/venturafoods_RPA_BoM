@@ -982,6 +982,10 @@ colnames(jde_bom)[55]<-"mon_l dep demand"
 writexl::write_xlsx(jde_bom, "C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/2024/03.26.2024/Bill of Material_032624.xlsx")
 
 
+file.copy("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/2024/03.19.2024/JDE BoM 03.19.2024.xlsx", 
+          "C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/2024/03.26.2024/JDE BoM 03.19.2024.xlsx")
+
+
 # Don't forget to check Net lbs
 
 
