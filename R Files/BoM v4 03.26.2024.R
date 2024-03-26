@@ -9,7 +9,7 @@ library(magrittr)
 library(skimr)
 library(rio)
 
-specific_date <- as.Date("2024-03-19")
+specific_date <- as.Date("2024-03-26")
 
 ##################################################################################################################################################################
 ##################################################################################################################################################################
@@ -80,7 +80,7 @@ inventory_model_data %>%
 
 # (Path revision needed) IOM MicroStrategy ----
 # https://edgeanalytics.venturafoods.com/MicroStrategyLibrary/app/DF007F1C11E9B3099BB30080EF7513D2/07915A52DE47AA1CDB4AB082191E4EBA
-IOM_micro <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/2024/03.19.2024/IOM Data Extract.xlsx")
+IOM_micro <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/2024/03.26.2024/IOM Data Extract.xlsx")
 
 IOM_micro[-1, ] -> IOM_micro
 colnames(IOM_micro) <- IOM_micro[1, ]
@@ -96,7 +96,7 @@ IOM_micro %>%
 
 # Exception Report ----
 
-exception_report <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/Safety Stock Compliance/Weekly Run Files/2024/03.12.2024/exception report.xlsx")
+exception_report <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/Safety Stock Compliance/Weekly Run Files/2024/03.26.2024/exception report.xlsx")
 
 exception_report[-1:-2, ] -> exception_report
 colnames(exception_report) <- exception_report[1, ]
@@ -114,7 +114,7 @@ colnames(exception_report)[2] <- "Item"
 # (Path revision needed) DSX Forecast backup ----
 
 DSX_Forecast_Backup <- read_excel(
-  "S:/Global Shared Folders/Large Documents/S&OP/Demand Planning/BI Forecast Backup/2024/DSX Forecast Backup - 2024.03.15.xlsx")
+  "S:/Global Shared Folders/Large Documents/S&OP/Demand Planning/BI Forecast Backup/2024/DSX Forecast Backup - 2024.03.25.xlsx")
 
 DSX_Forecast_Backup[-1,] -> DSX_Forecast_Backup
 colnames(DSX_Forecast_Backup) <- DSX_Forecast_Backup[1, ]
@@ -205,7 +205,7 @@ DSX_pivot_1 %>%
 
 
 # (Path revision needed) Opencustord ----
-Open_Cust_Ord <- read.csv("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/DSXIE/2024/03.19/open_cust_ord.csv", header = FALSE)
+Open_Cust_Ord <- read.csv("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/DSXIE/2024/03.26/open_cust_ord.csv", header = FALSE)
 
 
 Open_Cust_Ord %>% 
@@ -234,7 +234,7 @@ Open_Cust_Ord %>%
 
 
 ###################################### Location 39 custord  ######################################
-loc_39_bt <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/Safety Stock Compliance/Weekly Run Files/2024/03.19.2024/BT open order and qty.xlsx")
+loc_39_bt <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/Safety Stock Compliance/Weekly Run Files/2024/03.26.2024/BT open order and qty.xlsx")
 
 loc_39_bt[-1, ] -> loc_39_bt
 colnames(loc_39_bt) <- loc_39_bt[1, ]
@@ -288,7 +288,7 @@ rbind(Open_Cust_Ord, loc_39_bt_2) %>%
 
 # (Path revision needed) Sales and Open orders cube from Micro (Canada only) ----
 # https://edgeanalytics.venturafoods.com/MicroStrategyLibrary/app/DF007F1C11E9B3099BB30080EF7513D2/46031E5A134A6DD24564938529CF0EB8
-canada_micro <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/2024/03.19.2024/Canada Open Orders.xlsx", 
+canada_micro <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/2024/03.26.2024/Canada Open Orders.xlsx", 
                            col_names = FALSE)
 
 
@@ -330,7 +330,7 @@ reshape2::dcast(Open_Cust_Ord, ref ~ next_28_days, value.var = "Qty", sum) -> Op
 
 # (Path revision needed) Read JDE BoM ----
 
-jde_bom_us <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/2024/03.19.2024/jde_us.xlsx", 
+jde_bom_us <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/2024/03.26.2024/jde_us.xlsx", 
                          col_names = FALSE)
 
 
@@ -350,7 +350,7 @@ jde_bom_us %>%
 colnames(jde_bom_us)[13] <- "Quantity_w_Scrap"
 
 
-jde_bom_canada <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/2024/03.19.2024/jde_canada.xlsx", 
+jde_bom_canada <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/2024/03.26.2024/jde_canada.xlsx", 
                              col_names = FALSE)
 
 
@@ -396,7 +396,7 @@ data.frame(Inventory_Status_Code, Hold_Status) -> inventory_status_table
 
 
 
-inventory_micro <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/Safety Stock Compliance/Weekly Run Files/2024/03.19.2024/Inventory with Lot Report v.2.xlsx",
+inventory_micro <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/Safety Stock Compliance/Weekly Run Files/2024/03.26.2024/Inventory with Lot Report v.2.xlsx",
                               col_names = FALSE)
 
 
@@ -450,7 +450,7 @@ exception_report %>%
   dplyr::distinct(item, label) -> label_25_55
 
 
-inv_bal <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/Safety Stock Compliance/Weekly Run Files/2024/03.19.2024/inv_bal.xlsx")
+inv_bal <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/Safety Stock Compliance/Weekly Run Files/2024/03.26.2024/inv_bal.xlsx")
 inv_bal[-1:-2, ] -> inv_bal
 colnames(inv_bal) <- inv_bal[1, ]
 inv_bal[-1, ] -> inv_bal
@@ -760,7 +760,7 @@ jde_bom %>%
 
 
 # Category & Platform
-completed_sku_list <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/Safety Stock Compliance/Weekly Run Files/2024/03.19.2024/Completed SKU list - Linda.xlsx")
+completed_sku_list <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/Safety Stock Compliance/Weekly Run Files/2024/03.26.2024/Completed SKU list - Linda.xlsx")
 completed_sku_list[-1:-2, ]  %>% 
   janitor::clean_names() %>% 
   dplyr::select(x6, x9, x11) %>% 
@@ -807,7 +807,7 @@ jde_bom %>%
 
 
 # Net Wt code update
-pre_bom <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/2024/03.12.2024/Bill of Material_031224.xlsx")
+pre_bom <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/2024/03.19.2024/Bill of Material_031924.xlsx")
 
 pre_bom %>% 
   data.frame() %>% 
@@ -979,13 +979,13 @@ colnames(jde_bom)[53]<-"mon_j dep demand"
 colnames(jde_bom)[54]<-"mon_k dep demand"
 colnames(jde_bom)[55]<-"mon_l dep demand"
 
-writexl::write_xlsx(jde_bom, "C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/2024/03.19.2024/Bill of Material_031924.xlsx")
+writexl::write_xlsx(jde_bom, "C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/2024/03.26.2024/Bill of Material_032624.xlsx")
 
 
 # Don't forget to check Net lbs
 
 
 # After you are done with JDE
-file.copy("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/2024/03.19.2024/JDE BoM 03.19.2024.xlsx", 
-          "S:/Supply Chain Projects/Data Source (SCE)/JDE BoM/2024/JDE BoM 03.19.2024.xlsx")
+file.copy("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/2024/03.26.2024/JDE BoM 03.26.2024.xlsx", 
+          "S:/Supply Chain Projects/Data Source (SCE)/JDE BoM/2024/JDE BoM 03.26.2024.xlsx")
 
