@@ -424,7 +424,7 @@ inventory_micro %>%
   filter(!str_starts(Description, "PWS ") & 
            !str_starts(Description, "SUB ") & 
            !str_starts(Description, "THW ") & 
-           !str_starts(Description, "PALEET")) -> inventory_micro
+           !str_starts(Description, "PALLET")) -> inventory_micro
 
 
 reshape2::dcast(inventory_micro, campus_ref ~ Hold_Status , value.var = "Current_Inventory_Balance", sum) %>%
