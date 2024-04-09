@@ -355,6 +355,8 @@ data.frame(Inventory_Status_Code, Hold_Status) -> inventory_status_table
 
 
 
+
+
 inventory_micro <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/Safety Stock Compliance/Weekly Run Files/2024/04.09.2024/Inventory with Lot Report v.2.xlsx",
                               col_names = FALSE)
 
@@ -951,4 +953,11 @@ file.copy("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23
 # After you are done with JDE
 file.copy("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/2024/04.09.2024/JDE BoM 04.09.2024.xlsx", 
           "S:/Supply Chain Projects/Data Source (SCE)/JDE BoM/2024/JDE BoM 04.09.2024.xlsx")
+
+
+
+
+# If you pulled inventory before Linda, do below
+file.copy("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/Safety Stock Compliance/Weekly Run Files/2024/04.09.2024/Inventory with Lot Report v.2.xlsx", 
+          "S:/Supply Chain Projects/Data Source (SCE)/Inventory/Inventory with Lot Report v.2.xlsx")
 
