@@ -238,7 +238,10 @@ Open_Cust_Ord %>%
                 month = as.character(month),
                 day = as.character(day)) -> Open_Cust_Ord
 
-
+Open_Cust_Ord %>% 
+  dplyr::group_by(ref, ProductSkuCode, Loc, date, year, month, day, month_year) %>% 
+  dplyr::summarise(Qty = sum(Qty)) %>% 
+  dplyr::relocate(Qty, .after = "Loc") -> Open_Cust_Ord
 
 
 
