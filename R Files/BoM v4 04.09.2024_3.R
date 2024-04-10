@@ -355,7 +355,7 @@ data.frame(Inventory_Status_Code, Hold_Status) -> inventory_status_table
 
 
 
-inventory_micro_rm <- read_excel("S:/Supply Chain Projects/Data Source (SCE)/Inventory/Inventory with Lot Report v.2 - 2024.04.02.xlsx",
+inventory_micro_rm <- read_excel("S:/Supply Chain Projects/Data Source (SCE)/Inventory/Inventory with Lot Report v.2 - 2024.04.09.xlsx",
                                  sheet = "RM")
 
 
@@ -421,7 +421,7 @@ lot_status_code %>%
 
 
 
-jde_inv_for_25_55_label <- read_excel("S:/Supply Chain Projects/Data Source (SCE)/Inventory/JDE Inventory Lot Detail - 2024.04.02.xlsx")
+jde_inv_for_25_55_label <- read_excel("S:/Supply Chain Projects/Data Source (SCE)/Inventory/JDE Inventory Lot Detail - 2024.04.09.xlsx")
 
 jde_inv_for_25_55_label[-1:-5, ] -> jde_inv_for_25_55_label
 colnames(jde_inv_for_25_55_label) <- jde_inv_for_25_55_label[1, ]
@@ -1110,12 +1110,7 @@ file.copy("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23
 
 # After you are done with JDE
 file.copy("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/2024/04.09.2024/JDE BoM 04.09.2024.xlsx", 
-          "S:/Supply Chain Projects/Data Source (SCE)/JDE BoM/2024/JDE BoM 04.09.2024.xlsx")
+          "S:/Supply Chain Projects/Data Source (SCE)/JDE BoM/2024/JDE BoM 04.09.2024.xlsx", overwrite = TRUE)
 
 
-
-
-# If you pulled inventory before Linda, do below
-file.copy("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/Safety Stock Compliance/Weekly Run Files/2024/04.09.2024/Inventory with Lot Report v.2.xlsx", 
-          "S:/Supply Chain Projects/Data Source (SCE)/Inventory/Inventory with Lot Report v.2.xlsx")
 
