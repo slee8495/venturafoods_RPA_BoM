@@ -64,12 +64,9 @@ category_bi %>%
 
 # S:Drive - Supply Chain Project - Logistics - SCP - Cost Saving Reporting 
 
-inventory_model_data <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/Safety Stock Compliance/Weekly Run Files/2024/04.23.2024/SS Optimization by Location - Finished Goods LIVE.xlsx",
+
+inventory_model_data <- read_excel("S:/Supply Chain Projects/LOGISTICS/SCP/Cost Saving Reporting/SS Optimization by Location - Finished Goods LIVE.xlsx",
                                    col_names = FALSE, sheet = "Fin Goods")
-
-
-# inventory_model_data <- read_excel("S:/Supply Chain Projects/LOGISTICS/SCP/Cost Saving Reporting/SS Optimization by Location - Finished Goods LIVE.xlsx",
-#                                    col_names = FALSE, sheet = "Fin Goods")
 
 
 inventory_model_data[-1:-7, ] -> inventory_model_data
