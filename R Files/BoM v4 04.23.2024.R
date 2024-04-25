@@ -401,17 +401,11 @@ reshape2::dcast(inventory_micro, campus_ref ~ Hold_Status , value.var = "Current
   dplyr::rename(ref = campus_ref) %>%
   dplyr::mutate(comp_ref = ref) -> inventory_micro_pivot
 
-inventory_micro_pivot <- if (!"Soft Hold" %in% names(inventory_micro_pivot)) {
-  inventory_micro_pivot %>% mutate(`Soft Hold` = 0)
-} else {
-  inventory_micro_pivot
-}
-
 inventory_micro_pivot %>%
-  rename(Soft_Hold = "Soft Hold",
-         Hard_Hold = "Hard Hold",
-         Useable_temp = Useable) %>%
-  mutate(Useable = Soft_Hold + Useable_temp) -> inventory_micro_pivot
+  dplyr::rename(Soft_Hold = "Soft Hold",
+                Hard_Hold = "Hard Hold",
+                Useable_temp = Useable) %>%
+  dplyr::mutate(Useable = Soft_Hold + Useable_temp) -> inventory_micro_pivot
 
 
 
