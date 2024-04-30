@@ -1100,7 +1100,7 @@ colnames(jde_bom)[53]<-"mon_j dep demand"
 colnames(jde_bom)[54]<-"mon_k dep demand"
 colnames(jde_bom)[55]<-"mon_l dep demand"
 
-writexl::write_xlsx(jde_bom, "C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/2024/04.30.2024/Bill of Material_043024.xlsx")
+writexl::write_xlsx(jde_bom, "C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/2024/04.30.2024/Bill of Material_043024_2.xlsx")
 
 
 file.copy("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/2024/04.23.2024/JDE BoM 04.23.2024.xlsx", 
