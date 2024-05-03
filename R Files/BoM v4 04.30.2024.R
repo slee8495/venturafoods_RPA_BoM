@@ -16,7 +16,7 @@ specific_date <- as.Date("2024-04-30")
 ##################################################################################################################################################################
 
 ## Supplier Address Book 
-supplier_address  <- read_excel("S:/Supply Chain Projects/Data Source (SCE)/Address Book/Address Book - 2024.04.01.xlsx",
+supplier_address  <- read_excel("S:/Supply Chain Projects/Data Source (SCE)/Address Book/Address Book - 2024.05.02.xlsx",
                                 sheet = "supplier")
 
 ## FG_ref_to_mpg_ref 
@@ -1008,6 +1008,43 @@ jde_bom %>%
   dplyr::select(-Lead_time) %>% 
   dplyr::left_join(exception_report_lead_time %>% rename(Lead_time = leadtime_days), by = c("comp_ref" = "campus_ref")) %>% 
   dplyr::mutate(Lead_time = ifelse(is.na(Lead_time), 0, Lead_time)) -> jde_bom
+
+
+######################### 5/3/2024 #############################
+
+exception_report %>% 
+  dplyr::select(Item, Supplier, Campus, campus_ref) %>% 
+  dplyr::filter(Campus %in% c("622", "624")) %>% 
+  dplyr::filter(grepl("^[0-9]+$", Item)) %>% 
+  dplyr::distinct(Item, .keep_all = TRUE) %>% 
+  dplyr::select(Item, Supplier) %>% 
+  dplyr::rename(Component = Item) %>% 
+  dplyr::left_join(supplier_address %>% 
+                     janitor::clean_names() %>% 
+                     dplyr::select(address_number, alpha_name) %>% 
+                     dplyr::mutate(address_number = as.character(address_number)) %>% 
+                     dplyr::rename(Supplier = address_number,
+                                   supplier_name = alpha_name) %>% 
+                     dplyr::distinct(Supplier, supplier_name),
+                   by = "Supplier") %>% 
+  dplyr::distinct(Component, Supplier, supplier_name) -> exception_report_supplier_for_canada
+
+
+if (any(jde_bom$Business_Unit %in% c(622, 624))) {
+  jde_bom <- jde_bom %>%
+    mutate(Supplier = if_else(Business_Unit %in% c(622, 624),
+                              exception_report_supplier_for_canada$Supplier[match(Component, exception_report_supplier_for_canada$Component)],
+                              Supplier))
+}
+
+
+if (any(jde_bom$Business_Unit %in% c(622, 624))) {
+  jde_bom <- jde_bom %>%
+    mutate(supplier_name = if_else(Business_Unit %in% c(622, 624),
+                              exception_report_supplier_for_canada$supplier_name[match(Component, exception_report_supplier_for_canada$Component)],
+                              supplier_name))
+}
+
 
 
 
