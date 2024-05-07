@@ -873,6 +873,30 @@ jde_bom %>%
   dplyr::mutate(comp_ref = paste0(Business_Unit, "_", Component)) -> jde_bom
 
 
+###################################### Lead Time 04/05/2024 #################################
+
+
+exception_report_lead_time %>% 
+  janitor::clean_names() %>% 
+  dplyr::mutate(ref = paste0(loc, "_", item)) %>% 
+  dplyr::left_join(Campus_ref %>% select(Loc, Campus), by = c("loc" = "Loc")) %>% 
+  dplyr::mutate(campus_ref = paste0(Campus, "_", item)) %>% 
+  dplyr::mutate(leadtime_days = ifelse(is.na(leadtime_days), 0, as.numeric(leadtime_days))) %>% 
+  dplyr::arrange(desc(leadtime_days)) %>% 
+  dplyr::select(campus_ref, leadtime_days) %>% 
+  dplyr::group_by(campus_ref) %>%
+  dplyr::slice_max(leadtime_days, n = 1) %>%
+  dplyr::ungroup() %>% 
+  dplyr::distinct(campus_ref, .keep_all = TRUE) -> exception_report_lead_time
+
+
+jde_bom %>% 
+  dplyr::select(-Lead_time) %>% 
+  dplyr::left_join(exception_report_lead_time %>% rename(Lead_time = leadtime_days), by = c("comp_ref" = "campus_ref")) %>% 
+  dplyr::mutate(Lead_time = ifelse(is.na(Lead_time), 0, Lead_time)) -> jde_bom
+
+
+
 ###################################### supplier # 04/05/2024 #################################
 
 exception_report_supplier %>% 
@@ -951,8 +975,6 @@ jde_bom %>%
 
 
 
-jde_bom %>% 
-  filter(str_detect(str_to_lower(supplier_name), "vf")) %>% filter(mpf_or_line == 622 & Business_Unit == 624)
 
 exception_report_supplier %>% 
   dplyr::left_join(supplier_double_check, by = c("item" = "Component")) %>% 
@@ -987,36 +1009,19 @@ jde_bom %>%
 
 
 
-###################################### Lead Time 04/05/2024 #################################
-
-
-exception_report_lead_time %>% 
-  janitor::clean_names() %>% 
-  dplyr::mutate(ref = paste0(loc, "_", item)) %>% 
-  dplyr::left_join(Campus_ref %>% select(Loc, Campus), by = c("loc" = "Loc")) %>% 
-  dplyr::mutate(campus_ref = paste0(Campus, "_", item)) %>% 
-  dplyr::mutate(leadtime_days = ifelse(is.na(leadtime_days), 0, as.numeric(leadtime_days))) %>% 
-  dplyr::arrange(desc(leadtime_days)) %>% 
-  dplyr::select(campus_ref, leadtime_days) %>% 
-  dplyr::group_by(campus_ref) %>%
-  dplyr::slice_max(leadtime_days, n = 1) %>%
-  dplyr::ungroup() %>% 
-  dplyr::distinct(campus_ref, .keep_all = TRUE) -> exception_report_lead_time
-
-
-jde_bom %>% 
-  dplyr::select(-Lead_time) %>% 
-  dplyr::left_join(exception_report_lead_time %>% rename(Lead_time = leadtime_days), by = c("comp_ref" = "campus_ref")) %>% 
-  dplyr::mutate(Lead_time = ifelse(is.na(Lead_time), 0, Lead_time)) -> jde_bom
 
 
 ######################### 5/3/2024 #############################
 
-exception_report %>% 
-  dplyr::select(Item, Supplier, Campus, campus_ref) %>% 
-  dplyr::filter(Campus %in% c("622", "624")) %>% 
-  dplyr::filter(grepl("^[0-9]+$", Item)) %>% 
-  dplyr::distinct(Item, .keep_all = TRUE) %>% 
+exception_report_supplier %>%
+  dplyr::select(item, supplier, loc, Campus) %>%
+  dplyr::filter(Campus %in% c("622", "624")) %>%
+  dplyr::filter(grepl("^[0-9]+$", item)) %>%
+  dplyr::arrange(dplyr::desc(loc == "631")) %>%
+  dplyr::filter(!(loc == "631" & is.na(supplier))) %>%
+  dplyr::distinct(item, .keep_all = TRUE) %>% 
+  dplyr::rename(Item = item,
+                Supplier = supplier) %>% 
   dplyr::select(Item, Supplier) %>% 
   dplyr::rename(Component = Item) %>% 
   dplyr::left_join(supplier_address %>% 
