@@ -361,6 +361,10 @@ inventory_micro_rm <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura
                                  sheet = "RM")
 
 
+
+
+
+
 inventory_micro_rm[-1, ] -> inventory_micro_rm
 colnames(inventory_micro_rm) <- inventory_micro_rm[1, ]
 inventory_micro_rm[-1, ] -> inventory_micro_rm
@@ -407,6 +411,60 @@ inventory_micro_pivot %>%
                 Useable_temp = Useable) %>%
   dplyr::mutate(Useable = Soft_Hold + Useable_temp) -> inventory_micro_pivot
 
+
+
+
+inventory_micro_fg <- read_excel("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/Safety Stock Compliance/Weekly Run Files/2024/07.30.2024/Inventory.xlsx",
+                                 sheet = "FG")
+
+
+
+
+
+inventory_micro_fg[-1, ] -> inventory_micro_fg
+colnames(inventory_micro_fg) <- inventory_micro_fg[1, ]
+inventory_micro_fg[-1, ] -> inventory_micro_fg
+
+
+
+
+inventory_micro_fg %>% 
+  janitor::clean_names() %>% 
+  dplyr::mutate(item = gsub("-", "", item)) %>% 
+  dplyr::mutate(ref = paste0(location, "_", item),
+                campus_ref = paste0(campus_no, "_", item)) %>% 
+  dplyr::select(location, item, description, campus_no, inventory_hold_status, current_inventory_balance, ref, campus_ref) %>% 
+  dplyr::mutate(current_inventory_balance = as.numeric(current_inventory_balance)) -> inventory_micro_fg
+
+
+inventory_micro_fg %>% 
+  dplyr::rename(Location = location, 
+                Item = item,
+                Description = description,
+                Mfg_Location_campus = campus_no,
+                Hold_Status = inventory_hold_status,
+                Current_Inventory_Balance = current_inventory_balance) -> inventory_micro_fg
+
+
+inventory_micro_fg %>% 
+  filter(!str_starts(Description, "PWS ") & 
+           !str_starts(Description, "SUB ") & 
+           !str_starts(Description, "THW ") & 
+           !str_starts(Description, "PALLET")) -> inventory_micro_fg
+
+
+
+
+
+reshape2::dcast(inventory_micro_fg, campus_ref ~ Hold_Status , value.var = "Current_Inventory_Balance", sum) %>%
+  dplyr::rename(ref = campus_ref) %>%
+  dplyr::mutate(comp_ref = ref) -> inventory_micro_fg_pivot
+
+inventory_micro_fg_pivot %>%
+  dplyr::rename(Soft_Hold = "Soft Hold",
+                Hard_Hold = "Hard Hold",
+                Useable_temp = Useable) %>%
+  dplyr::mutate(Useable = Soft_Hold + Useable_temp) -> inventory_micro_fg_pivot
 
 
 ################# inv_bal for 25, 55 label ###############
@@ -603,7 +661,7 @@ jde_bom %>%
 
 
 # FG on Hand
-merge(jde_bom, inventory_micro_pivot[, c("ref", "Useable")], by = "ref", all.x = TRUE) %>% 
+merge(jde_bom, inventory_micro_fg_pivot[, c("ref", "Useable")], by = "ref", all.x = TRUE) %>% 
   dplyr::mutate(Useable = replace(Useable, is.na(Useable), 0)) %>% 
   dplyr::rename(FG_On_Hand = Useable) -> jde_bom
 
