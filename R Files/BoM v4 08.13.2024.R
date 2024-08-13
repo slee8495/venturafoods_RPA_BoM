@@ -1280,7 +1280,7 @@ file.copy("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23
 
 # After you are done with JDE
 file.copy("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/2024/08.13.2024/JDE BoM 08.13.2024.xlsx", 
-          "S:/Supply Chain Projects/Data Source (SCE)/JDE BoM/2024/JDE BoM 08.06.2024.xlsx", overwrite = TRUE)
+          "S:/Supply Chain Projects/Data Source (SCE)/JDE BoM/2024/JDE BoM 08.13.2024.xlsx", overwrite = TRUE)
 
 
 
