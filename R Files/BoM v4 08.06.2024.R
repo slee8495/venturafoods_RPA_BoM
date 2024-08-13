@@ -166,6 +166,18 @@ DSX_Forecast_Backup %>%
                 Cust_Ref_Forecast_Cases = replace(Cust_Ref_Forecast_Cases, is.na(Cust_Ref_Forecast_Cases), 0)) -> DSX_Forecast_Backup
 
 
+# Filter to start from Last month
+last_month_start <- as.Date(format(Sys.Date(), "%Y-%m-01")) - months(1)
+
+# Convert Forecast_Month_Year_Code_Segment_ID to a date format for filtering
+DSX_Forecast_Backup %>%
+  dplyr::mutate(Forecast_Date = as.Date(paste0(substr(Forecast_Month_Year_Code_Segment_ID, 1, 4), "-", substr(Forecast_Month_Year_Code_Segment_ID, 5, 6), "-01"))) %>% 
+  dplyr::filter(Forecast_Date >= last_month_start) -> DSX_Forecast_Backup
+
+
+
+
+
 # DSX Pivot table
 reshape2::dcast(DSX_Forecast_Backup, mfg_ref ~ Forecast_Month_Year_Code_Segment_ID , value.var = "Adjusted_Forecast_Cases", sum) -> DSX_pivot_1
 
@@ -1251,7 +1263,7 @@ colnames(jde_bom)[53]<-"mon_j dep demand"
 colnames(jde_bom)[54]<-"mon_k dep demand"
 colnames(jde_bom)[55]<-"mon_l dep demand"
 
-writexl::write_xlsx(jde_bom, "C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/2024/08.06.2024/Bill of Material_080624.xlsx")
+writexl::write_xlsx(jde_bom, "C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/2024/08.06.2024/Bill of Material_080624_2.xlsx")
 
 
 file.copy("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/2024/07.30.2024/JDE BoM 07.30.2024.xlsx", 
