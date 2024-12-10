@@ -9,7 +9,7 @@ library(magrittr)
 library(skimr)
 library(rio)
 
-specific_date <- as.Date("2024-12-03")
+specific_date <- as.Date("2024-12-10")
 
 ##################################################################################################################################################################
 ##################################################################################################################################################################
@@ -89,7 +89,7 @@ inventory_model_data %>%
 
 # (Path revision needed) IOM MicroStrategy ----
 # https://edgeanalytics.venturafoods.com/MicroStrategyLibrary/app/DF007F1C11E9B3099BB30080EF7513D2/07915A52DE47AA1CDB4AB082191E4EBA/K271--K264
-IOM_micro <- read_excel("S:/Supply Chain Projects/Data Source (SCE)/Report ingredients/Stan/12032024/IOM Data Extract.xlsx")
+IOM_micro <- read_excel("S:/Supply Chain Projects/Data Source (SCE)/Report ingredients/Stan/12102024/IOM Data Extract.xlsx")
 
 IOM_micro[-1, ] -> IOM_micro
 colnames(IOM_micro) <- IOM_micro[1, ]
@@ -105,7 +105,7 @@ IOM_micro %>%
 
 # Exception Report ----
 
-exception_report <- read_excel("S:/Supply Chain Projects/Data Source (SCE)/JDE Exception report extract/2024/exception report 2024.12.03.xlsx")
+exception_report <- read_excel("S:/Supply Chain Projects/Data Source (SCE)/JDE Exception report extract/2024/exception report 2024.12.10.xlsx")
 
 exception_report[-1:-2, ] -> exception_report
 colnames(exception_report) <- exception_report[1, ]
@@ -124,7 +124,7 @@ exception_report -> exception_report_lead_time
 # (Path revision needed) DSX Forecast backup ----
 
 DSX_Forecast_Backup <- read_excel(
-  "S:/Global Shared Folders/Large Documents/S&OP/Demand Planning/BI Forecast Backup/2024/DSX Forecast Backup - 2024.12.02.xlsx")
+  "S:/Global Shared Folders/Large Documents/S&OP/Demand Planning/BI Forecast Backup/2024/DSX Forecast Backup - 2024.12.09.xlsx")
 
 DSX_Forecast_Backup[-1,] -> DSX_Forecast_Backup
 colnames(DSX_Forecast_Backup) <- DSX_Forecast_Backup[1, ]
@@ -237,7 +237,7 @@ DSX_pivot_1 %>%
 
 # https://edgeanalytics.venturafoods.com:443/MicroStrategy/servlet/mstrWeb?evt=4058&src=mstrWeb.4058&_subscriptionID=1ADEEE1E6046707D2EE259B1A3D4F767&reportViewMode=1&Server=ENV-323771LAIO1USE2&Project=VF%20Intelligent%20Enterprise&Port=39321&share=1
 # (Path revision needed) Opencustord ----
-Open_Cust_Ord <- read.xlsx("S:/Supply Chain Projects/Data Source (SCE)/Report ingredients/Stan/12032024/US and CAN OO BT where status _ J_2.xlsx",
+Open_Cust_Ord <- read.xlsx("S:/Supply Chain Projects/Data Source (SCE)/Report ingredients/Stan/12102024/US and CAN OO BT where status _ J.xlsx",
                            colNames = FALSE)
 
 
@@ -279,7 +279,7 @@ Open_Cust_Ord %>%
 
 # (Path revision needed) Sales and Open orders cube from Micro (Canada only) ----
 # https://edgeanalytics.venturafoods.com/MicroStrategyLibrary/app/DF007F1C11E9B3099BB30080EF7513D2/46031E5A134A6DD24564938529CF0EB8
-canada_micro <- read_excel("S:/Supply Chain Projects/Data Source (SCE)/Report ingredients/Stan/12032024/Canada Open Orders.xlsx", 
+canada_micro <- read_excel("S:/Supply Chain Projects/Data Source (SCE)/Report ingredients/Stan/12102024/Canada Open Orders.xlsx", 
                            col_names = FALSE)
 
 
@@ -321,14 +321,14 @@ reshape2::dcast(Open_Cust_Ord, ref ~ next_28_days, value.var = "Qty", sum) -> Op
 
 # (Path revision needed) Read JDE BoM ----
 
-jde_bom_us <- read_excel("S:/Supply Chain Projects/Data Source (SCE)/Report ingredients/Stan/12032024/jde_us_12062024.xlsx", 
+jde_bom_us <- read_excel("S:/Supply Chain Projects/Data Source (SCE)/Report ingredients/Stan/12102024/jde_us.xlsx", 
                          col_names = FALSE)
 
 
 jde_bom_us[-1:-2, ] -> jde_bom_us
 colnames(jde_bom_us) <- jde_bom_us[1, ] 
 jde_bom_us[-1, ] -> jde_bom_us
-jde_bom_us[ , c(-4,-16)] -> jde_bom_us
+jde_bom_us[ , c(-4,-16:-19)] -> jde_bom_us
 
 names(jde_bom_us) <- stringr::str_replace_all(names(jde_bom_us), c(" " = "_"))
 type_convert(jde_bom_us) -> jde_bom_us
@@ -341,22 +341,22 @@ jde_bom_us %>%
 colnames(jde_bom_us)[13] <- "Quantity_w_Scrap"
 
 
-jde_bom_canada <- read_excel("S:/Supply Chain Projects/Data Source (SCE)/Report ingredients/Stan/12032024/jde_canada.xlsx", 
+jde_bom_canada <- read_excel("S:/Supply Chain Projects/Data Source (SCE)/Report ingredients/Stan/12102024/jde_canada.xlsx", 
                              col_names = FALSE)
 
 
 jde_bom_canada[-1:-2, ] -> jde_bom_canada
 colnames(jde_bom_canada) <- jde_bom_canada[1, ] 
 jde_bom_canada[-1, ] -> jde_bom_canada
-jde_bom_canada[ , c(-4,-16)] -> jde_bom_canada
+jde_bom_canada[ , c(-4,-16:-19)] -> jde_bom_canada
 
 names(jde_bom_canada) <- stringr::str_replace_all(names(jde_bom_canada), c(" " = "_"))
 type_convert(jde_bom_canada) -> jde_bom_canada
 
 
-jde_bom_canada %<>% 
+jde_bom_canada %>% 
   dplyr::mutate(ref = paste0(Business_Unit, "_", Parent_Item_Number),
-                comp_ref = paste0(Business_Unit, "_", Component))
+                comp_ref = paste0(Business_Unit, "_", Component)) -> jde_bom_canada
 
 colnames(jde_bom_canada)[13] <- "Quantity_w_Scrap"
 
@@ -387,7 +387,7 @@ data.frame(Inventory_Status_Code, Hold_Status) -> inventory_status_table
 
 
 
-inventory_micro_rm <- read_excel("S:/Supply Chain Projects/Data Source (SCE)/Inventory/Inventory with Lot Report v.2 - 2024.12.03.xlsx",
+inventory_micro_rm <- read_excel("S:/Supply Chain Projects/Data Source (SCE)/Inventory/Inventory with Lot Report v.2 - 2024.12.10.xlsx",
                                  sheet = "RM")
 
 
@@ -444,7 +444,7 @@ inventory_micro_pivot %>%
 
 
 
-inventory_micro_fg <- read_excel("S:/Supply Chain Projects/Data Source (SCE)/Inventory/Inventory with Lot Report v.2 - 2024.12.03.xlsx",
+inventory_micro_fg <- read_excel("S:/Supply Chain Projects/Data Source (SCE)/Inventory/Inventory with Lot Report v.2 - 2024.12.10.xlsx",
                                  sheet = "FG")
 
 
@@ -511,7 +511,7 @@ lot_status_code %>%
 
 
 
-jde_inv_for_25_55_label <- read_excel("S:/Supply Chain Projects/Data Source (SCE)/Inventory/JDE Inventory Lot Detail - 2024.12.03.xlsx")
+jde_inv_for_25_55_label <- read_excel("S:/Supply Chain Projects/Data Source (SCE)/Inventory/JDE Inventory Lot Detail - 2024.12.10.xlsx")
 
 jde_inv_for_25_55_label[-1:-5, ] -> jde_inv_for_25_55_label
 colnames(jde_inv_for_25_55_label) <- jde_inv_for_25_55_label[1, ]
@@ -833,7 +833,7 @@ jde_bom %>%
 
 
 # Category & Platform
-completed_sku_list <- read_excel("S:/Supply Chain Projects/Data Source (SCE)/Report ingredients/Stan/12032024/Complete SKU list - Linda.xlsx")
+completed_sku_list <- read_excel("S:/Supply Chain Projects/Data Source (SCE)/Report ingredients/Stan/12102024/Complete SKU list - Linda.xlsx")
 completed_sku_list[-1:-2, ]  %>% 
   janitor::clean_names() %>% 
   dplyr::select(x6, x9, x11) %>% 
@@ -880,7 +880,7 @@ jde_bom %>%
 
 
 # Net Wt code update
-pre_bom <- read_excel("S:/Supply Chain Projects/Data Source (SCE)/Report ingredients/Stan/11262024/Bill of Material_11262024.xlsx")
+pre_bom <- read_excel("S:/Supply Chain Projects/Data Source (SCE)/Report ingredients/Stan/12032024/Bill of Material_12032024.xlsx")
 
 pre_bom %>% 
   data.frame() %>% 
@@ -1378,19 +1378,19 @@ colnames(jde_bom)[53]<-"mon_j dep demand"
 colnames(jde_bom)[54]<-"mon_k dep demand"
 colnames(jde_bom)[55]<-"mon_l dep demand"
 
-writexl::write_xlsx(jde_bom, "C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/2024/12.03.2024/Bill of Material_12032024_2.xlsx")
+writexl::write_xlsx(jde_bom, "C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/2024/12.10.2024/Bill of Material_12102024.xlsx")
 
 
-file.copy("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/2024/11.26.2024/JDE BoM 11.26.2024.xlsx", 
-          "C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/2024/12.03.2024/JDE BoM 12.03.2024.xlsx")
+file.copy("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/2024/12.03.2024/JDE BoM 12.03.2024.xlsx", 
+          "C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/2024/12.10.2024/JDE BoM 12.10.2024.xlsx")
 
 
 # Don't forget to check Net lbs 
 
 
 # After you are done with JDE
-file.copy("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/2024/12.03.2024/JDE BoM 12.03.2024.xlsx", 
-          "S:/Supply Chain Projects/Data Source (SCE)/JDE BoM/2024/JDE BoM 12.03.2024.xlsx", overwrite = TRUE)
+file.copy("C:/Users/slee/OneDrive - Ventura Foods/Ventura Work/SCE/Project/FY 23/BoM version 2/Weekly Run/2024/12.10.2024/JDE BoM 12.10.2024.xlsx", 
+          "S:/Supply Chain Projects/Data Source (SCE)/JDE BoM/2024/JDE BoM 12.10.2024.xlsx", overwrite = TRUE)
 
 
 
