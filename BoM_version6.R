@@ -333,11 +333,28 @@ names(jde_bom_us) <- stringr::str_replace_all(names(jde_bom_us), c(" " = "_"))
 type_convert(jde_bom_us) -> jde_bom_us
 
 
+colnames(jde_bom_us)[13] <- "Quantity_w_Scrap"
+
+jde_bom_us %>%
+  mutate(
+    needs_correction = is.na(Unit_Cost),
+    Stocking_Type = ifelse(needs_correction, jde_bom_us$Commodity_Class, Stocking_Type),
+    Percent_Scrap = ifelse(needs_correction, jde_bom_us$UM, Percent_Scrap),
+    Quantity_Per = ifelse(needs_correction, jde_bom_us$Stocking_Type, Quantity_Per),
+    Quantity_w_Scrap = ifelse(needs_correction, jde_bom_us$Percent_Scrap, Quantity_w_Scrap),
+    Unit_Cost = ifelse(needs_correction, jde_bom_us$Quantity_Per, Unit_Cost)
+  ) %>%
+  select(-needs_correction) -> jde_bom_us
+
+
 jde_bom_us %>% 
   dplyr::mutate(ref = paste0(Business_Unit, "_", Parent_Item_Number),
                 comp_ref = paste0(Business_Unit, "_", Component)) -> jde_bom_us
 
-colnames(jde_bom_us)[13] <- "Quantity_w_Scrap"
+
+
+
+
 
 
 jde_bom_canada <- read_excel("S:/Supply Chain Projects/Data Source (SCE)/Report ingredients/Stan/01142025/jde_canada.xlsx", 
@@ -353,11 +370,24 @@ names(jde_bom_canada) <- stringr::str_replace_all(names(jde_bom_canada), c(" " =
 type_convert(jde_bom_canada) -> jde_bom_canada
 
 
+
+colnames(jde_bom_canada)[13] <- "Quantity_w_Scrap"
+
+
+jde_bom_canada %>%
+  mutate(
+    needs_correction = is.na(Unit_Cost),
+    Stocking_Type = ifelse(needs_correction, jde_bom_canada$Commodity_Class, Stocking_Type),
+    Percent_Scrap = ifelse(needs_correction, jde_bom_canada$UM, Percent_Scrap),
+    Quantity_Per = ifelse(needs_correction, jde_bom_canada$Stocking_Type, Quantity_Per),
+    Quantity_w_Scrap = ifelse(needs_correction, jde_bom_canada$Percent_Scrap, Quantity_w_Scrap),
+    Unit_Cost = ifelse(needs_correction, jde_bom_canada$Quantity_Per, Unit_Cost)
+  ) %>%
+  select(-needs_correction) -> jde_bom_canada
+
 jde_bom_canada %>% 
   dplyr::mutate(ref = paste0(Business_Unit, "_", Parent_Item_Number),
                 comp_ref = paste0(Business_Unit, "_", Component)) -> jde_bom_canada
-
-colnames(jde_bom_canada)[13] <- "Quantity_w_Scrap"
 
 
 rbind(jde_bom_us, jde_bom_canada) -> jde_bom
